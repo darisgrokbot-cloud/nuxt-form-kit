@@ -1,0 +1,82 @@
+{
+  "name": "nuxt-form-kit",
+  "version": "0.1.0",
+  "description": "Schema-driven form inputs for Nuxt 4, built on Nuxt UI",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/darisgrokbot-cloud/nuxt-form-kit.git"
+  },
+  "homepage": "https://formkit.stackcloud.cc",
+  "bugs": {
+    "url": "https://github.com/darisgrokbot-cloud/nuxt-form-kit/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/types.d.mts",
+      "import": "./dist/module.mjs"
+    },
+    "./core": {
+      "types": "./dist/runtime/core/index.d.ts",
+      "import": "./dist/runtime/core/index.js"
+    }
+  },
+  "main": "./dist/module.mjs",
+  "typesVersions": {
+    "*": {
+      ".": [
+        "./dist/types.d.mts"
+      ],
+      "core": [
+        "./dist/runtime/core/index.d.ts"
+      ]
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prepack": "nuxt-module-build build",
+    "dev": "nuxi dev playground --port 3333",
+    "dev:build": "nuxi build playground",
+    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
+    "build": "nuxt-module-build build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
+  },
+  "peerDependencies": {
+    "nuxt": "^4.0.0"
+  },
+  "dependencies": {
+    "@iconify-json/lucide": "^1.2.158",
+    "@internationalized/date": "^3.12.4",
+    "@nuxt/kit": "^4.6.4",
+    "@nuxt/ui": "^4.13.0"
+  },
+  "devDependencies": {
+    "@nuxt/module-builder": "^1.0.4",
+    "@nuxt/schema": "^4.6.4",
+    "@types/node": "^26.6.6",
+    "nuxt": "^4.6.4",
+    "typescript": "^5.9.3",
+    "vitest": "^5.1.1",
+    "vue-tsc": "^3.3.14"
+  },
+  "keywords": [
+    "nuxt",
+    "nuxt-module",
+    "nuxt-ui",
+    "form",
+    "schema",
+    "dynamic-form"
+  ],
+  "engines": {
+    "node": ">=20"
+  }
+}
