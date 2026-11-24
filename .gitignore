@@ -1,0 +1,19 @@
+node_modules
+dist
+.nuxt
+.output
+.data
+*.tgz
+playground/.nuxt
+playground/.output
+.e2e
+
+# secrets / local tooling
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+.claude
