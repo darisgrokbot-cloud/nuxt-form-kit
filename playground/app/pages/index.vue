@@ -29,33 +29,33 @@ const schema = defineFormSchema([
       {
         key: 'department',
         type: 'tree-select',
-        label: 'หน่วยงาน (tree-select)',
+        label: 'หมวดสินค้า (tree-select)',
         layout: { span: { base: 12, md: 6 } },
         rules: { required: true },
         options: {
           items: [
             {
-              label: 'ฝ่ายไอที',
+              label: 'อิเล็กทรอนิกส์',
               value: 'it',
               children: [
                 {
-                  label: 'พัฒนา',
+                  label: 'คอมพิวเตอร์',
                   value: 'dev',
                   children: [
-                    { label: 'Frontend', value: 'fe' },
-                    { label: 'Backend', value: 'be' },
+                    { label: 'โน้ตบุ๊ก', value: 'fe' },
+                    { label: 'เดสก์ท็อป', value: 'be' },
                   ],
                 },
-                { label: 'โครงสร้างพื้นฐาน', value: 'infra' },
+                { label: 'อุปกรณ์เครือข่าย', value: 'infra' },
               ],
             },
             {
-              label: 'ฝ่ายบุคคล',
+              label: 'ของใช้ในบ้าน',
               value: 'hr',
               defaultExpanded: true,
               children: [
-                { label: 'สรรหา', value: 'recruit' },
-                { label: 'สวัสดิการ', value: 'welfare' },
+                { label: 'เฟอร์นิเจอร์', value: 'recruit' },
+                { label: 'ของตกแต่ง', value: 'welfare' },
               ],
             },
           ],
@@ -72,12 +72,12 @@ const schema = defineFormSchema([
           expandAll: true,
           items: [
             {
-              label: 'องค์กร',
+              label: 'โฟลเดอร์โปรเจกต์',
               value: 'org',
               children: [
-                { label: 'บัญชี', value: 'acc' },
-                { label: 'กฎหมาย', value: 'legal' },
-                { label: 'IT', value: 'it_scope', disabled: true },
+                { label: 'เอกสาร', value: 'acc' },
+                { label: 'สื่อ', value: 'legal' },
+                { label: 'เทมเพลต', value: 'it_scope', disabled: true },
               ],
             },
           ],
@@ -97,8 +97,8 @@ const schema = defineFormSchema([
       { key: 'province_id', type: 'select', label: 'จังหวัด', options: { source: 'provinces' }, layout: { span: { base: 12, md: 4 } }, rules: { required: true } },
       { key: 'district_id', type: 'select', label: 'อำเภอ', options: { source: 'districts', params: { province_id: '{{province_id}}' }, dependsOn: ['province_id'] }, layout: { span: { base: 12, md: 4 } }, rules: { required: true } },
       { key: 'subdistrict_id', type: 'select', label: 'ตำบล', options: { source: 'subdistricts', params: { district_id: '{{district_id}}' }, dependsOn: ['district_id'], autoSelectSingle: true }, layout: { span: { base: 12, md: 4 } }, hint: 'auto-select' },
-      { key: 'department_id', type: 'autocomplete', label: 'ฝ่าย (95 รายการ, หน้าละ 20)', options: { source: 'departments', pageSize: 20, search: { debounce: 250 } }, layout: { span: { base: 12, md: 6 } }, rules: { required: true } },
-      { key: 'manager_id', type: 'autocomplete', label: 'หัวหน้า (กรองตามฝ่าย)', options: { source: 'employees', params: { department_id: '{{department_id}}' }, dependsOn: ['department_id'], map: { label: 'full_name', value: 'id', description: 'email' } }, layout: { span: { base: 12, md: 6 } } },
+      { key: 'department_id', type: 'autocomplete', label: 'ทีม (95 รายการ, หน้าละ 20)', options: { source: 'departments', pageSize: 20, search: { debounce: 250 } }, layout: { span: { base: 12, md: 6 } }, rules: { required: true } },
+      { key: 'manager_id', type: 'autocomplete', label: 'ผู้ดูแล (กรองตามทีม)', options: { source: 'employees', params: { department_id: '{{department_id}}' }, dependsOn: ['department_id'], map: { label: 'full_name', value: 'id', description: 'email' } }, layout: { span: { base: 12, md: 6 } } },
       { key: 'watchers', type: 'autocomplete', label: 'ผู้ติดตาม (multiple)', multiple: true, options: { source: 'employees', map: { label: 'full_name', value: 'id' } }, rules: { maxItems: 3 } },
       { key: 'broken', type: 'select', label: 'Source ที่ error', options: { source: 'failing' }, help: 'ต้องแสดงข้อความโหลดไม่สำเร็จ' },
     ],

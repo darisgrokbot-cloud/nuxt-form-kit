@@ -14,7 +14,7 @@ describe('normalizeOption', () => {
   })
 
   it('guesses label/value keys from common API shapes', () => {
-    expect(normalizeOption({ id: 1, name: 'ฝ่าย 1' })).toMatchObject({ label: 'ฝ่าย 1', value: 1 })
+    expect(normalizeOption({ id: 1, name: 'ทีม 1' })).toMatchObject({ label: 'ทีม 1', value: 1 })
     expect(normalizeOption({ value: 'x', title: 'X' })).toMatchObject({ label: 'X', value: 'x' })
     expect(normalizeOption({ code: 'TH', text: 'ไทย' })).toMatchObject({ label: 'ไทย', value: 'TH' })
   })

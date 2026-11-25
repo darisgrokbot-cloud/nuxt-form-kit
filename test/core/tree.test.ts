@@ -19,27 +19,27 @@ import type { FieldSchema, FormSchema } from '../../src/runtime/core/types'
 
 const sample: TreeOptionItem[] = [
   {
-    label: 'ฝ่ายไอที',
+    label: 'อิเล็กทรอนิกส์',
     value: 'it',
     children: [
       {
-        label: 'พัฒนา',
+        label: 'คอมพิวเตอร์',
         value: 'dev',
         children: [
-          { label: 'Frontend', value: 'fe', description: 'Vue / Nuxt' },
-          { label: 'Backend', value: 'be', disabled: true },
+          { label: 'โน้ตบุ๊ก', value: 'fe', description: 'Vue / Nuxt' },
+          { label: 'เดสก์ท็อป', value: 'be', disabled: true },
         ],
       },
-      { label: 'โครงสร้างพื้นฐาน', value: 'infra' },
+      { label: 'อุปกรณ์เครือข่าย', value: 'infra' },
     ],
   },
   {
-    label: 'ฝ่ายบุคคล',
+    label: 'ของใช้ในบ้าน',
     value: 'hr',
     defaultExpanded: true,
     children: [
-      { label: 'สรรหา', value: 'recruit' },
-      { label: 'สวัสดิการ', value: 'welfare', icon: 'i-lucide-heart' },
+      { label: 'เฟอร์นิเจอร์', value: 'recruit' },
+      { label: 'ของตกแต่ง', value: 'welfare', icon: 'i-lucide-heart' },
     ],
   },
 ]
@@ -80,7 +80,7 @@ describe('flattenTree / findTreeOption', () => {
   })
 
   it('finds nested nodes by loose equality', () => {
-    expect(findTreeOption(sample, 'fe')?.label).toBe('Frontend')
+    expect(findTreeOption(sample, 'fe')?.label).toBe('โน้ตบุ๊ก')
     expect(findTreeOption(normalizeTreeOptions([{ id: 1, name: 'A' }], { value: 'id', label: 'name' }), '1')?.label).toBe('A')
   })
 })
@@ -99,7 +99,7 @@ describe('selection — independent / leaf-only / cascade', () => {
 
   it('cascade selects descendants and syncs parents', () => {
     const dev = findTreeOption(sample, 'dev')!
-    // Backend is disabled — only Frontend is enabled under dev (+ infra under it separately)
+    // Desktop (be) is disabled — only notebook (fe) is enabled under computers (+ network under it separately)
     const next = applyTreeToggle(sample, dev, [], 'cascade', true)
     expect(next).toContain('dev')
     expect(next).toContain('fe')
@@ -153,7 +153,7 @@ describe('getCheckState / indeterminate', () => {
 
 describe('filterTree', () => {
   it('keeps ancestors of matches and returns values to expand', () => {
-    const { nodes, expanded } = filterTree(sample, 'front')
+    const { nodes, expanded } = filterTree(sample, 'โน้ต')
     expect(nodes).toHaveLength(1)
     expect(nodes[0]!.value).toBe('it')
     expect(nodes[0]!.children![0]!.children!.map(c => c.value)).toEqual(['fe'])
@@ -163,7 +163,7 @@ describe('filterTree', () => {
   it('matches description and returns original tree for empty query', () => {
     expect(filterTree(sample, '  ').nodes).toBe(sample)
     const { nodes } = filterTree(sample, 'Vue')
-    expect(findTreeOption(nodes, 'fe')?.label).toBe('Frontend')
+    expect(findTreeOption(nodes, 'fe')?.label).toBe('โน้ตบุ๊ก')
   })
 })
 
