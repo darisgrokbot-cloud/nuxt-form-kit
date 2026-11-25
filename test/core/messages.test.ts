@@ -7,6 +7,7 @@ const A11Y_KEYS: MessageKey[] = [
   'showPassword',
   'hidePassword',
   'openCalendar',
+  'openColorPicker',
   'expand',
   'collapse',
 ]
@@ -30,6 +31,7 @@ describe('messages a11y registry', () => {
     expect(messages.showPassword).toBe('แสดงรหัสผ่าน')
     expect(messages.hidePassword).toBe('ซ่อนรหัสผ่าน')
     expect(messages.openCalendar).toBe('เปิดปฏิทิน')
+    expect(messages.openColorPicker).toBe('เลือกสี')
     expect(messages.expand).toBe('กาง')
     expect(messages.collapse).toBe('ยุบ')
   })
@@ -40,6 +42,7 @@ describe('messages a11y registry', () => {
     expect(messages.showPassword).toBe('Show password')
     expect(messages.hidePassword).toBe('Hide password')
     expect(messages.openCalendar).toBe('Open calendar')
+    expect(messages.openColorPicker).toBe('Pick a color')
     expect(messages.expand).toBe('Expand')
     expect(messages.collapse).toBe('Collapse')
   })

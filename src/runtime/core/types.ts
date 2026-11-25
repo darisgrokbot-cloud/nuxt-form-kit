@@ -296,6 +296,17 @@ export interface TreeSelectField extends BaseField<'tree-select'> {
   searchable?: boolean
 }
 
+/** Output format for Nuxt UI `UColorPicker` */
+export type ColorFormat = 'hex' | 'rgb' | 'hsl' | 'cmyk' | 'lab'
+
+export interface ColorField extends BaseField<'color'> {
+  /** Color string format (default: `'hex'`) */
+  format?: ColorFormat
+  /** Optional preset swatches shown under the picker */
+  swatches?: string[]
+  clearable?: boolean
+}
+
 /** field type ที่ลงทะเบียนเพิ่มเองผ่าน registry */
 export interface CustomField extends BaseField<string & {}> {
   options?: OptionsConfig
@@ -305,6 +316,7 @@ export interface CustomField extends BaseField<string & {}> {
 export type BuiltinField =
   | TextField | TextareaField | NumberField | SelectField | AutocompleteField
   | RadioField | CheckboxGroupField | CheckboxField | DateField | TreeSelectField
+  | ColorField
 
 export type FieldSchema = BuiltinField | CustomField
 
@@ -369,6 +381,6 @@ export type ServerError = { field?: string, key?: string, name?: string, message
 export type MessageKey =
   | RuleName | 'dateRange' | 'loadError' | 'noOptions' | 'loading' | 'loadMore' | 'search' | 'selectPlaceholder' | 'empty'
   | 'expandAll' | 'collapseAll' | 'selectedCount'
-  | 'clear' | 'showPassword' | 'hidePassword' | 'openCalendar' | 'expand' | 'collapse'
+  | 'clear' | 'showPassword' | 'hidePassword' | 'openCalendar' | 'openColorPicker' | 'expand' | 'collapse'
 
 export type Messages = Record<MessageKey, string>

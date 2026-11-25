@@ -15,6 +15,7 @@ describe('InferFormValues — field schema', () => {
       { key: 'notify', type: 'switch' },
       { key: 'start', type: 'date' },
       { key: 'window', type: 'date-range' },
+      { key: 'accent', type: 'color' },
       { key: 'tags', type: 'checkbox-group', options: { items: ['a'] } },
       { key: 'roles', type: 'select', multiple: true, options: { items: ['a'] } },
       { key: 'level', type: 'select', options: { items: ['a'] } },
@@ -28,6 +29,7 @@ describe('InferFormValues — field schema', () => {
     expectTypeOf<V['notify']>().toEqualTypeOf<boolean>()
     expectTypeOf<V['start']>().toEqualTypeOf<string | null>()
     expectTypeOf<V['window']>().toEqualTypeOf<{ start: string | null, end: string | null }>()
+    expectTypeOf<V['accent']>().toEqualTypeOf<string | null>()
     expectTypeOf<V['tags']>().toEqualTypeOf<Array<string | number | boolean | null>>()
     expectTypeOf<V['roles']>().toEqualTypeOf<Array<string | number | boolean | null>>()
     expectTypeOf<V['level']>().toEqualTypeOf<string | number | boolean | null>()

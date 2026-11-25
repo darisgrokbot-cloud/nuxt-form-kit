@@ -27,7 +27,7 @@ export type InferFieldValue<F> =
         : F extends { type: 'checkbox-group' } ? Primitive[]
           : F extends { multiple: true } ? Primitive[]
             : F extends { type: 'date' } ? string | null
-              : F extends { type: 'text' | 'email' | 'password' | 'tel' | 'url' | 'textarea' } ? string | null
+              : F extends { type: 'text' | 'email' | 'password' | 'tel' | 'url' | 'textarea' | 'color' } ? string | null
                 : F extends { type: 'select' | 'radio' | 'autocomplete' | 'tree-select' } ? Primitive
                   : unknown
 

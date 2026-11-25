@@ -29,6 +29,7 @@ export const th: Messages = {
   showPassword: 'แสดงรหัสผ่าน',
   hidePassword: 'ซ่อนรหัสผ่าน',
   openCalendar: 'เปิดปฏิทิน',
+  openColorPicker: 'เลือกสี',
   expand: 'กาง',
   collapse: 'ยุบ',
 }
@@ -62,6 +63,7 @@ export const en: Messages = {
   showPassword: 'Show password',
   hidePassword: 'Hide password',
   openCalendar: 'Open calendar',
+  openColorPicker: 'Pick a color',
   expand: 'Expand',
   collapse: 'Collapse',
 }

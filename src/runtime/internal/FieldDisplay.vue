@@ -46,13 +46,24 @@ const text = computed(() => {
   if (field.type === 'password') return '••••••••'
   return String(value)
 })
+
+const colorSwatch = computed(() => {
+  if (props.field.type !== 'color' || typeof props.value !== 'string' || !props.value) return null
+  return /^(#|rgb|hsl)/i.test(props.value) ? props.value : null
+})
 </script>
 
 <template>
   <p
-    class="text-sm text-default whitespace-pre-line break-words min-h-8 py-1.5"
+    class="flex items-center gap-2 text-sm text-default whitespace-pre-line break-words min-h-8 py-1.5"
     :data-sf-display="field.key"
   >
+    <span
+      v-if="colorSwatch"
+      class="size-4 shrink-0 rounded-sm border border-default"
+      :style="{ backgroundColor: colorSwatch }"
+      aria-hidden="true"
+    />
     {{ text }}
   </p>
 </template>

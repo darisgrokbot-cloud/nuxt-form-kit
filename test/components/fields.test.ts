@@ -94,6 +94,95 @@ describe('field inputs', () => {
     expect(wrapper.text()).toMatch(/Blue|Color/)
   })
 
+  it('color field renders swatch, updates model, clears, and opens picker', async () => {
+    const model = ref<Record<string, unknown>>({ accent: '#3B82F6' })
+    const wrapper = await mountSuspended(SfForm, {
+      props: {
+        schema: [
+          {
+            key: 'accent',
+            type: 'color',
+            label: 'Accent',
+            format: 'hex',
+            clearable: true,
+            swatches: ['#EF4444', '#22C55E'],
+            placeholder: '#000000',
+          },
+        ],
+        modelValue: model.value,
+        'onUpdate:modelValue': (v: Record<string, unknown>) => {
+          model.value = v
+        },
+        locale: 'en',
+      },
+      attachTo: document.body,
+    })
+    await flushPromises()
+
+    const root = fieldEl(wrapper.element, 'accent')!
+    expect(root.getAttribute('data-sf-type')).toBe('color')
+    expect(root.querySelector('[data-sf-color-input]')).toBeTruthy()
+
+    const input = root.querySelector('input')!
+    expect(input.value).toBe('#3B82F6')
+    expect(input.getAttribute('placeholder')).toBe('#000000')
+
+    const swatch = root.querySelector('[data-sf-color-swatch]')!
+    expect(swatch.getAttribute('aria-label')).toBe('Pick a color')
+    expect(swatch.getAttribute('aria-expanded')).toBe('false')
+
+    const form = (wrapper.vm as { form: { setValue: (k: string, v: unknown) => void } }).form
+    form.setValue('accent', '#112233')
+    await flushPromises()
+    await nextTick()
+    expect(model.value.accent).toBe('#112233')
+    expect(root.querySelector('input')!.value).toBe('#112233')
+
+    await swatch.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    await flushPromises()
+    await nextTick()
+
+    expect(document.querySelector('[data-sf-color-picker]')).toBeTruthy()
+    expect(swatch.getAttribute('aria-expanded')).toBe('true')
+
+    // Close picker before clear so UColorPicker does not rewrite the value
+    await swatch.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    await flushPromises()
+    await nextTick()
+
+    const clearBtn = root.querySelector('[data-sf-color-clear]')
+    expect(clearBtn).toBeTruthy()
+    await clearBtn!.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    await flushPromises()
+    await nextTick()
+    expect(model.value.accent == null || model.value.accent === '').toBe(true)
+  })
+
+  it('color field respects disabledWhen', async () => {
+    const wrapper = await mountSuspended(SfForm, {
+      props: {
+        schema: [
+          {
+            key: 'accent',
+            type: 'color',
+            label: 'Accent',
+            disabledWhen: true,
+            defaultValue: '#111827',
+          },
+        ],
+        modelValue: { accent: '#111827' },
+        locale: 'en',
+      },
+    })
+    await flushPromises()
+
+    const root = fieldEl(wrapper.element, 'accent')!
+    const input = root.querySelector('input')!
+    expect(input.disabled).toBe(true)
+    const swatch = root.querySelector('[data-sf-color-swatch]') as HTMLButtonElement
+    expect(swatch.disabled).toBe(true)
+  })
+
   it('date field accepts an ISO value via setValue', async () => {
     const model = ref<Record<string, unknown>>({})
     const wrapper = await mountSuspended(SfForm, {

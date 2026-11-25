@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Built-in **`color`** field type: Nuxt UI `UColorPicker` in a `UPopover`, triggered from a swatch button beside a hex (or `rgb` / `hsl` / `cmyk` / `lab`) text input. Supports `format`, `placeholder`, `disabled`, `clearable`, and optional `swatches` presets. Value type is `string | null`. Would ship as **0.5.0** (minor).
+
 ## [0.4.0] - 2026-11-25
 
 ### Added

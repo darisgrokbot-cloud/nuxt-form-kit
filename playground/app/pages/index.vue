@@ -4,7 +4,7 @@ const schema = defineFormSchema([
     type: 'section',
     key: 'basic',
     title: 'ข้อมูลพื้นฐาน',
-    description: 'text / email / password / textarea / number / money',
+    description: 'text / email / password / textarea / number / money / color',
     children: [
       { key: 'code', type: 'text', label: 'รหัส', placeholder: 'เช่น EMP-001', layout: { span: { base: 12, md: 4 } }, rules: { required: true, pattern: { regex: '^[A-Z]{3}-\\d{3}$', message: 'รูปแบบต้องเป็น ABC-123' }, custom: ['uniqueCode'] }, hint: 'ลอง TAK-001 (ถูกใช้แล้ว)' },
       { key: 'name', type: 'text', label: 'ชื่อ', layout: { span: { base: 12, md: 8 } }, rules: { required: true, maxLength: 50, noSpecialChars: true }, counter: true },
@@ -14,6 +14,16 @@ const schema = defineFormSchema([
       { key: 'salary', type: 'money', label: 'เงินเดือน', layout: { span: { base: 12, md: 4 } }, rules: { min: 0 } },
       { key: 'bonus', type: 'money', label: 'โบนัส', help: 'ต้องไม่มากกว่าเงินเดือน', layout: { span: { base: 12, md: 4 } }, rules: { compare: { field: 'salary', op: '<=' } } },
       { key: 'note', type: 'textarea', label: 'หมายเหตุ', rows: 2, autoresize: true, counter: true, rules: { maxLength: 200 } },
+      {
+        key: 'accent',
+        type: 'color',
+        label: 'สีเน้น',
+        placeholder: '#3B82F6',
+        format: 'hex',
+        swatches: ['#EF4444', '#F59E0B', '#22C55E', '#3B82F6', '#A855F7', '#111827'],
+        layout: { span: { base: 12, md: 4 } },
+        hint: 'UColorPicker + swatches',
+      },
     ],
   },
   {
