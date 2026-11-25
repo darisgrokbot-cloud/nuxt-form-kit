@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, provide, ref, useSlots, watch } from 'vue'
+import { useRuntimeConfig } from '#imports'
 import type { SchemaFormInstance } from '../composables/useSchemaForm'
 import { useSchemaForm } from '../composables/useSchemaForm'
-import type { FieldError, FormMode, FormSchema, Messages, RuleFn, ServerError, SourceFn, Values } from '../core/types'
-import { SCHEMA_FORM_KEY, SCHEMA_FORM_SLOTS } from '../internal/context'
+import { CONTAINER_ROOT_CLASS } from '../core/layout'
+import type { FieldError, FormMode, FormSchema, GridResponsive, Messages, RuleFn, ServerError, SourceFn, Values } from '../core/types'
+import { SCHEMA_FORM_GRID_KEY, SCHEMA_FORM_KEY, SCHEMA_FORM_SLOTS } from '../internal/context'
 import { focusFirstError } from '../internal/focusFirstError'
 import NodeRenderer from '../internal/NodeRenderer.vue'
 
@@ -31,6 +33,12 @@ const props = withDefaults(defineProps<{
   omitHidden?: boolean
   /** โฟกัส + เลื่อนไปฟิลด์ error แรกเมื่อ validation ไม่ผ่าน (default: true) */
   focusOnError?: boolean
+  /**
+   * Grid breakpoint mode for layout.span.
+   * Overrides `schemaForm.grid.responsive` from the module config.
+   * `container` sizes columns against the form width (sidebar-friendly).
+   */
+  responsive?: GridResponsive
 }>(), {
   schema: undefined,
   form: undefined,
@@ -44,6 +52,7 @@ const props = withDefaults(defineProps<{
   submitLabel: undefined,
   resetLabel: undefined,
   focusOnError: true,
+  responsive: undefined,
 })
 
 const model = defineModel<Values>({ default: () => ({}) })
@@ -65,9 +74,27 @@ const form: SchemaFormInstance = props.form ?? useSchemaForm(() => props.schema 
   rules: props.rules,
 })
 
+let moduleResponsive: GridResponsive = 'viewport'
+try {
+  const pub = useRuntimeConfig().public as {
+    schemaForm?: { grid?: { responsive?: GridResponsive } }
+  }
+  moduleResponsive = pub.schemaForm?.grid?.responsive ?? 'viewport'
+}
+catch {
+  // Outside Nuxt (e.g. isolated unit tests) → keep viewport default
+}
+
+const gridResponsive = computed<GridResponsive>(() => props.responsive ?? moduleResponsive)
+const formClass = computed(() => [
+  'sf-form',
+  gridResponsive.value === 'container' ? CONTAINER_ROOT_CLASS : undefined,
+])
+
 const slots = useSlots()
 provide(SCHEMA_FORM_KEY, form)
 provide(SCHEMA_FORM_SLOTS, slots)
+provide(SCHEMA_FORM_GRID_KEY, gridResponsive)
 
 const uForm = ref()
 watch(uForm, (instance) => {
@@ -123,7 +150,7 @@ defineExpose({
     :validate="form.runValidation"
     :validate-on="validateOn"
     :disabled="disabled"
-    class="sf-form"
+    :class="formClass"
     @submit="onSubmit"
     @error="onError"
   >

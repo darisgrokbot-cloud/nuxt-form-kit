@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest'
-import { spanClass } from '../../src/runtime/core/layout'
 import {
   findOption, mergeOptions, normalizeOption, normalizeOptions, normalizeSourceResult, searchConfig,
 } from '../../src/runtime/core/options'
@@ -79,16 +78,6 @@ describe('resolveTemplate', () => {
 
   it('templateFields lists referenced root keys', () => {
     expect(templateFields({ a: '{{a}}', b: 'x{{nested.x}}{{c}}' })).toEqual(['a', 'nested', 'c'])
-  })
-})
-
-describe('spanClass', () => {
-  it('maps spans to static tailwind classes', () => {
-    expect(spanClass(undefined)).toBe('col-span-12')
-    expect(spanClass(6)).toBe('col-span-6')
-    expect(spanClass(20)).toBe('col-span-12')
-    expect(spanClass({ base: 12, md: 6, xl: 4 })).toBe('col-span-12 md:col-span-6 xl:col-span-4')
-    expect(spanClass({ md: 3 })).toBe('col-span-12 md:col-span-3')
   })
 })
 

@@ -2,7 +2,7 @@ import {
   addComponentsDir, addImports, addImportsDir, addPlugin, addTemplate, createResolver, defineNuxtModule,
 } from '@nuxt/kit'
 import { defu } from 'defu'
-import type { Messages } from './runtime/core/types'
+import type { GridResponsive, Messages } from './runtime/core/types'
 
 export interface ModuleOptions {
   /** Component prefix, e.g. Sf → <SfForm> (default: 'Sf') */
@@ -17,6 +17,14 @@ export interface ModuleOptions {
    * for this package as described in the README.
    */
   css: boolean
+  /**
+   * 12-column grid responsive behavior (default: viewport).
+   * Use `container` when forms sit in narrow panels on wide screens.
+   * Overridable per form via the `responsive` prop on `<SfForm>`.
+   */
+  grid: {
+    responsive: GridResponsive
+  }
 }
 
 export type * from './runtime/core/types'
@@ -34,6 +42,9 @@ const defaults: ModuleOptions = {
   prefix: 'Sf',
   locale: 'th',
   css: true,
+  grid: {
+    responsive: 'viewport',
+  },
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -57,11 +68,16 @@ export default defineNuxtModule<ModuleOptions>({
     const resolved = defu(nuxtOpts.schemaForm, options, defaults) as ModuleOptions
 
     const publicConfig = nuxt.options.runtimeConfig.public as Record<string, unknown>
-    const formPublic = {
-      locale: resolved.locale,
-      messages: resolved.messages ?? {},
-      ...(publicConfig.schemaForm as object | undefined),
-    }
+    const formPublic = defu(
+      publicConfig.schemaForm as object | undefined,
+      {
+        locale: resolved.locale,
+        messages: resolved.messages ?? {},
+        grid: {
+          responsive: resolved.grid.responsive,
+        },
+      },
+    )
     publicConfig.schemaForm = formPublic
 
     addPlugin(resolve('./runtime/plugin'))

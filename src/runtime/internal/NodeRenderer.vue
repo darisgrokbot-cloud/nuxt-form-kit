@@ -3,7 +3,7 @@ import { evaluateCondition } from '../core/conditions'
 import { spanClass } from '../core/layout'
 import { isField } from '../core/schema'
 import type { SchemaNode } from '../core/types'
-import { useFormContext, useFormSlots } from './context'
+import { useFormContext, useFormGridResponsive, useFormSlots } from './context'
 import FieldRenderer from './FieldRenderer.vue'
 import SlotOutlet from './SlotOutlet'
 
@@ -13,6 +13,7 @@ defineProps<{ nodes: SchemaNode[] }>()
 
 const form = useFormContext()
 const slots = useFormSlots()
+const gridResponsive = useFormGridResponsive()
 
 function visible(node: SchemaNode) {
   return evaluateCondition(node.visibleWhen, form.state.value, true)
@@ -25,7 +26,7 @@ function nodeKey(node: SchemaNode, index: number) {
 }
 
 function cellClass(node: SchemaNode) {
-  return [spanClass(node.layout?.span), node.layout?.class]
+  return [spanClass(node.layout?.span, gridResponsive.value), node.layout?.class]
 }
 
 function sectionContentId(node: SchemaNode, index: number) {
