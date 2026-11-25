@@ -73,7 +73,7 @@ const range = computed({
           variant="link"
           size="sm"
           icon="i-lucide-calendar"
-          aria-label="Open calendar"
+          :aria-label="messages.openCalendar"
           class="px-0"
           :disabled="disabled"
         />
@@ -108,7 +108,7 @@ const range = computed({
           variant="link"
           size="sm"
           icon="i-lucide-calendar"
-          aria-label="Open calendar"
+          :aria-label="messages.openCalendar"
           class="px-0"
           :disabled="disabled"
         />

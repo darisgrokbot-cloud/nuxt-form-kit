@@ -27,6 +27,10 @@ function nodeKey(node: SchemaNode, index: number) {
 function cellClass(node: SchemaNode) {
   return [spanClass(node.layout?.span), node.layout?.class]
 }
+
+function sectionContentId(node: SchemaNode, index: number) {
+  return `sf-section-${nodeKey(node, index)}`
+}
 </script>
 
 <template>
@@ -44,7 +48,12 @@ function cellClass(node: SchemaNode) {
       >
         <UCollapsible v-if="node.collapsible" :default-open="node.defaultOpen ?? true">
           <template #default="{ open }">
-            <button type="button" class="flex w-full items-start justify-between gap-2 text-left">
+            <button
+              type="button"
+              class="flex w-full items-start justify-between gap-2 text-left"
+              :aria-expanded="open"
+              :aria-controls="sectionContentId(node, index)"
+            >
               <span>
                 <span v-if="node.title" class="block text-base font-semibold text-highlighted">{{ form.t(node.title) }}</span>
                 <span v-if="node.description" class="block text-sm text-muted">{{ form.t(node.description) }}</span>
@@ -53,7 +62,11 @@ function cellClass(node: SchemaNode) {
             </button>
           </template>
           <template #content>
-            <div class="mt-4 grid grid-cols-12 gap-x-4 gap-y-4">
+            <div
+              :id="sectionContentId(node, index)"
+              class="mt-4 grid grid-cols-12 gap-x-4 gap-y-4"
+              role="region"
+            >
               <SfNodeRenderer :nodes="node.children" />
             </div>
           </template>

@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Avoid TDZ crash when `serverErrors` are applied during `useSchemaForm` setup (`uForm` was referenced before initialization).
 - Re-apply pending `serverErrors` once `UForm` binds, so initial server-error props show on first paint.
+- Tree-select combobox now exposes `aria-controls`, `aria-activedescendant`, listbox/option ids, and wires `aria-invalid` / `aria-describedby` via `useFormField`; clear and expand/collapse controls use translated labels.
+- Collapsible section toggles expose `aria-expanded` and `aria-controls` for the section content region.
+- Password show/hide and date calendar buttons use message-registry `aria-label`s (Thai default + English) instead of hard-coded English; password toggle keeps `aria-pressed`.
 
 ## [0.3.1] - 2026-11-25
 
