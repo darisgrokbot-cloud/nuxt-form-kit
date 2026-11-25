@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Component tests for `<SfForm>` and main field types via `@nuxt/test-utils` (separate Vitest `components` project + CI job), keeping core unit tests in a fast Node project.
+
+### Fixed
+
+- Avoid TDZ crash when `serverErrors` are applied during `useSchemaForm` setup (`uForm` was referenced before initialization).
+- Re-apply pending `serverErrors` once `UForm` binds, so initial server-error props show on first paint.
+
 ## [0.3.1] - 2026-11-25
 
 ### Changed

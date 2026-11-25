@@ -179,6 +179,14 @@ export function useSchemaForm(schemaInput: MaybeRefOrGetter<FormSchema>, options
     return t(getField(key)?.label) ?? key
   }
 
+  /* ------------------------------ UForm bind -------------------------- */
+  // Declared before server-error watch so immediate showErrors() is not TDZ.
+  const uForm = shallowRef<UFormLike | null>(null)
+
+  async function showErrors() {
+    if (uForm.value) await uForm.value.validate({ silent: true })
+  }
+
   /* ---------------------------- server errors ------------------------- */
   const serverErrors = ref<Record<string, string>>({})
   watch(() => toValue(options.serverErrors), (list) => {
@@ -288,13 +296,6 @@ export function useSchemaForm(schemaInput: MaybeRefOrGetter<FormSchema>, options
       && !validateSync(ruleValue(f.field, state.value[key]), f.field.rules, state.value, ruleContext(key))
   }))
 
-  /* ------------------------------ UForm bind -------------------------- */
-  const uForm = shallowRef<UFormLike | null>(null)
-
-  async function showErrors() {
-    if (uForm.value) await uForm.value.validate({ silent: true })
-  }
-
   /** ตรวจทั้งฟอร์มและแสดง error — คืน true ถ้าผ่าน */
   async function validate(): Promise<boolean> {
     if (uForm.value) {
@@ -397,6 +398,8 @@ export function useSchemaForm(schemaInput: MaybeRefOrGetter<FormSchema>, options
     /** @internal ผูก UForm ของ SfForm */
     _bindForm(form: UFormLike | null) {
       uForm.value = form
+      // Re-apply pending server errors once UForm is available (initial prop case).
+      if (form && Object.keys(serverErrors.value).length) void showErrors()
     },
   }
 }

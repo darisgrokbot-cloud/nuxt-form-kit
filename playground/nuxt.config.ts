@@ -10,4 +10,10 @@ export default defineNuxtConfig({
   schemaForm: {
     locale: 'th',
   },
+  // Include component tests in the Nuxt TS context (vitest nuxt environment).
+  typescript: {
+    tsConfig: {
+      include: ['../test/components/**/*'],
+    },
+  },
 })
