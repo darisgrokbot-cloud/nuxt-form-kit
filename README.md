@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./assets/lockup-dark.svg" />
+    <img alt="Schema Form" src="./assets/lockup-light.svg" width="320" />
+  </picture>
+</p>
+
 # Schema Form (`@stackcloud/schema-form`)
 
 > Formerly published as `nuxt-form-kit`.

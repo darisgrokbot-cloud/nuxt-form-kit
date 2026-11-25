@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img">
+  <title>Schema Form mark, option A (Field Stack) — dark backgrounds</title>
+  <path fill="#3EE6A6" d="M 11 6 H 53 A 5 5 0 0 1 58 11 V 15 A 5 5 0 0 1 53 20 H 28 A 2 2 0 0 0 26 22 V 23 A 2 2 0 0 0 28 25 H 53 A 5 5 0 0 1 58 30 V 53 A 5 5 0 0 1 53 58 H 11 A 5 5 0 0 1 6 53 V 49 A 5 5 0 0 1 11 44 H 36 A 2 2 0 0 0 38 42 V 41 A 2 2 0 0 0 36 39 H 11 A 5 5 0 0 1 6 34 V 11 A 5 5 0 0 1 11 6 Z"/>
+  <g fill="#0B1511" fill-opacity="0.32">
+    <rect x="12.00" y="11.85" width="40.00" height="2.30" rx="1.15"/>
+    <rect x="12.00" y="30.85" width="40.00" height="2.30" rx="1.15"/>
+    <rect x="12.00" y="49.85" width="40.00" height="2.30" rx="1.15"/>
+  </g>
+</svg>
