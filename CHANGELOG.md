@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-25
+
 ### Added
 
 - Opt-in **container-query grid** mode: `schemaForm.grid.responsive: 'viewport' | 'container'` (default `'viewport'`) and a matching `responsive` prop on `<SfForm>`. In `container` mode the form root gets `@container` and `layout.span` breakpoints use Tailwind v4 container variants (`@sm:` / `@md:` / `@lg:` / `@xl:`) so forms in narrow sidebars no longer follow the viewport width.
@@ -89,7 +91,8 @@ export default defineNuxtConfig({
 })
 ```
 
-[Unreleased]: https://github.com/darisgrokbot-cloud/schema-form/compare/v0.3.1...HEAD
+[Unreleased]: https://github.com/darisgrokbot-cloud/schema-form/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/darisgrokbot-cloud/schema-form/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/darisgrokbot-cloud/schema-form/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/darisgrokbot-cloud/schema-form/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/darisgrokbot-cloud/schema-form/releases/tag/v0.2.0
