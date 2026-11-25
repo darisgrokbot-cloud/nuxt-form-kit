@@ -10,11 +10,18 @@ import SlotOutlet from './SlotOutlet'
 import type { BuiltinFieldType } from '../core/types'
 import AutocompleteInput from './fields/AutocompleteInput.vue'
 import ChoiceInput from './fields/ChoiceInput.vue'
+import ColorInput from './fields/ColorInput.vue'
 import DateInput from './fields/DateInput.vue'
+import DateTimeInput from './fields/DateTimeInput.vue'
+import FileInput from './fields/FileInput.vue'
 import NumberInput from './fields/NumberInput.vue'
+import PinInput from './fields/PinInput.vue'
 import SelectInput from './fields/SelectInput.vue'
+import SliderInput from './fields/SliderInput.vue'
+import TagsInput from './fields/TagsInput.vue'
 import TextareaInput from './fields/TextareaInput.vue'
 import TextInput from './fields/TextInput.vue'
+import TimeInput from './fields/TimeInput.vue'
 import ToggleInput from './fields/ToggleInput.vue'
 import TreeSelectInput from './fields/TreeSelectInput.vue'
 
@@ -41,6 +48,13 @@ const BUILTIN: Record<BuiltinFieldType, Component> = {
   'date': DateInput,
   'date-range': DateInput,
   'tree-select': TreeSelectInput,
+  'color': ColorInput,
+  'file': FileInput,
+  'tags': TagsInput,
+  'time': TimeInput,
+  'datetime': DateTimeInput,
+  'slider': SliderInput,
+  'pin': PinInput,
 }
 
 const key = computed(() => props.field.key)

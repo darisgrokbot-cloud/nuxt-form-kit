@@ -296,6 +296,80 @@ export interface TreeSelectField extends BaseField<'tree-select'> {
   searchable?: boolean
 }
 
+/** Output format for Nuxt UI `UColorPicker` */
+export type ColorFormat = 'hex' | 'rgb' | 'hsl' | 'cmyk' | 'lab'
+
+export interface ColorField extends BaseField<'color'> {
+  /** Color string format (default: `'hex'`) */
+  format?: ColorFormat
+  /** Optional preset swatches shown under the picker */
+  swatches?: string[]
+  clearable?: boolean
+}
+
+export interface FileField extends BaseField<'file'> {
+  /** MIME / extension list for the native file picker (e.g. `image/*,.pdf`) */
+  accept?: string
+  multiple?: boolean
+  /** Max bytes per file — oversized files are rejected with `fileTooLarge` */
+  maxSize?: number
+  /** Max number of files when `multiple` (enforced with `tooManyFiles`) */
+  maxFiles?: number
+  /** Show image previews (default `true`, maps to UFileUpload `preview` + `fileImage`) */
+  preview?: boolean
+}
+
+export interface TagsField extends BaseField<'tags'> {
+  /** Max number of tags */
+  max?: number
+  /** Reject duplicate tags (default `true`) */
+  unique?: boolean
+}
+
+export type TimeGranularity = 'hour' | 'minute' | 'second'
+
+export interface TimeField extends BaseField<'time'> {
+  /** Segment granularity (default `'minute'` → value `HH:mm`) */
+  granularity?: TimeGranularity
+  hourCycle?: 12 | 24
+  /** `HH:mm` / `HH:mm:ss` or `{ field }` referencing another time field */
+  min?: string | { field: string }
+  max?: string | { field: string }
+}
+
+export interface DateTimeField extends BaseField<'datetime'> {
+  /** Segment granularity for the time part (default `'minute'` → `YYYY-MM-DDTHH:mm`) */
+  granularity?: 'minute' | 'second'
+  hourCycle?: 12 | 24
+  /** ISO local datetime or `{ field }` */
+  min?: string | { field: string }
+  max?: string | { field: string }
+}
+
+export interface SliderField extends BaseField<'slider'> {
+  min?: number
+  max?: number
+  step?: number
+  /** Two thumbs → value `[number, number]` */
+  range?: boolean
+  /** Show current value (maps to USlider `tooltip`) */
+  showValue?: boolean
+}
+
+export interface PinField extends BaseField<'pin'> {
+  /** Number of cells (default `6`) */
+  length?: number
+  /**
+   * Maps to Nuxt UI `UPinInput` `type` (`'number'` | `'text'`).
+   * Named `inputType` so it does not collide with schema `type: 'pin'`.
+   */
+  inputType?: 'number' | 'text'
+  /** Mask characters (password-style) */
+  mask?: boolean
+  /** Enable OTP autocomplete (`one-time-code`) */
+  otp?: boolean
+}
+
 /** field type ที่ลงทะเบียนเพิ่มเองผ่าน registry */
 export interface CustomField extends BaseField<string & {}> {
   options?: OptionsConfig
@@ -305,6 +379,7 @@ export interface CustomField extends BaseField<string & {}> {
 export type BuiltinField =
   | TextField | TextareaField | NumberField | SelectField | AutocompleteField
   | RadioField | CheckboxGroupField | CheckboxField | DateField | TreeSelectField
+  | ColorField | FileField | TagsField | TimeField | DateTimeField | SliderField | PinField
 
 export type FieldSchema = BuiltinField | CustomField
 
@@ -369,6 +444,7 @@ export type ServerError = { field?: string, key?: string, name?: string, message
 export type MessageKey =
   | RuleName | 'dateRange' | 'loadError' | 'noOptions' | 'loading' | 'loadMore' | 'search' | 'selectPlaceholder' | 'empty'
   | 'expandAll' | 'collapseAll' | 'selectedCount'
-  | 'clear' | 'showPassword' | 'hidePassword' | 'openCalendar' | 'expand' | 'collapse'
+  | 'clear' | 'showPassword' | 'hidePassword' | 'openCalendar' | 'openColorPicker' | 'expand' | 'collapse'
+  | 'fileTooLarge' | 'tooManyFiles' | 'removeFile' | 'filesSelected'
 
 export type Messages = Record<MessageKey, string>

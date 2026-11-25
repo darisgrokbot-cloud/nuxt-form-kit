@@ -4,7 +4,7 @@ import { templateFields } from './template'
 import { clone, isEmpty } from './utils'
 
 const LAYOUT_TYPES = new Set(['section', 'row', 'slot'])
-const MULTI_TYPES = new Set(['checkbox-group'])
+const MULTI_TYPES = new Set(['checkbox-group', 'tags'])
 
 export function isLayoutNode(node: SchemaNode): node is LayoutNode {
   return LAYOUT_TYPES.has(node.type)
@@ -50,6 +50,7 @@ export function emptyValueOf(field: FieldSchema): unknown {
   if (isMultiple(field)) return []
   if (field.type === 'checkbox' || field.type === 'switch') return false
   if (field.type === 'date-range') return { start: null, end: null }
+  if (field.type === 'slider' && (field as { range?: boolean }).range) return null
   return null
 }
 

@@ -55,8 +55,15 @@ describe('emptyValueOf / buildInitialValues', () => {
     expect(emptyValueOf(f({ type: 'checkbox' }))).toBe(false)
     expect(emptyValueOf(f({ type: 'switch' }))).toBe(false)
     expect(emptyValueOf(f({ type: 'checkbox-group' }))).toEqual([])
+    expect(emptyValueOf(f({ type: 'tags' }))).toEqual([])
+    expect(emptyValueOf(f({ type: 'file', multiple: true } as never))).toEqual([])
+    expect(emptyValueOf(f({ type: 'file' }))).toBeNull()
     expect(emptyValueOf(f({ type: 'select', multiple: true } as never))).toEqual([])
     expect(emptyValueOf(f({ type: 'date-range' }))).toEqual({ start: null, end: null })
+    expect(emptyValueOf(f({ type: 'time' }))).toBeNull()
+    expect(emptyValueOf(f({ type: 'datetime' }))).toBeNull()
+    expect(emptyValueOf(f({ type: 'slider' }))).toBeNull()
+    expect(emptyValueOf(f({ type: 'pin' }))).toBeNull()
   })
 
   it('applies defaultValue and lets initial values win (including extra keys)', () => {

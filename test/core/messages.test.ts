@@ -7,8 +7,13 @@ const A11Y_KEYS: MessageKey[] = [
   'showPassword',
   'hidePassword',
   'openCalendar',
+  'openColorPicker',
   'expand',
   'collapse',
+  'fileTooLarge',
+  'tooManyFiles',
+  'removeFile',
+  'filesSelected',
 ]
 
 describe('messages a11y registry', () => {
@@ -30,8 +35,11 @@ describe('messages a11y registry', () => {
     expect(messages.showPassword).toBe('แสดงรหัสผ่าน')
     expect(messages.hidePassword).toBe('ซ่อนรหัสผ่าน')
     expect(messages.openCalendar).toBe('เปิดปฏิทิน')
+    expect(messages.openColorPicker).toBe('เลือกสี')
     expect(messages.expand).toBe('กาง')
     expect(messages.collapse).toBe('ยุบ')
+    expect(messages.fileTooLarge).toContain('{maxSize}')
+    expect(messages.tooManyFiles).toContain('{maxFiles}')
   })
 
   it('resolveMessages returns english a11y strings', () => {
@@ -40,8 +48,13 @@ describe('messages a11y registry', () => {
     expect(messages.showPassword).toBe('Show password')
     expect(messages.hidePassword).toBe('Hide password')
     expect(messages.openCalendar).toBe('Open calendar')
+    expect(messages.openColorPicker).toBe('Pick a color')
     expect(messages.expand).toBe('Expand')
     expect(messages.collapse).toBe('Collapse')
+    expect(messages.fileTooLarge).toContain('{maxSize}')
+    expect(messages.tooManyFiles).toContain('{maxFiles}')
+    expect(messages.removeFile).toBe('Remove file')
+    expect(messages.filesSelected).toContain('{count}')
   })
 
   it('resolveMessages allows overriding a11y strings', () => {

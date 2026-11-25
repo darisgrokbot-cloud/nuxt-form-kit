@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Built-in field types for the upcoming **0.5.0** minor (no version bump in this branch):
+  - **`color`** — Nuxt UI `UColorPicker` in a `UPopover` (swatch + hex/`rgb`/`hsl`/`cmyk`/`lab` input, optional `swatches`). Value: `string | null`.
+  - **`file`** — `UFileUpload` with `accept`, `multiple`, `maxSize` / `maxFiles` (messages `fileTooLarge` / `tooManyFiles`), and image `preview`. Value: `File | File[] | null`.
+  - **`tags`** — `UInputTags` with `max`, `unique` (default `true`), `placeholder`. Value: `string[]`.
+  - **`time`** — `UInputTime` (`@internationalized/date` `Time`) with `granularity` / `hourCycle` / `min` / `max`. Value: `HH:mm` or `HH:mm:ss` string | `null`.
+  - **`datetime`** — `UInputDate` + `CalendarDateTime` (`granularity` minute/second, `min` / `max`). Value: local ISO `YYYY-MM-DDTHH:mm` (or with seconds) | `null`.
+  - **`slider`** — `USlider` with `min` / `max` / `step` / `range`; `showValue` renders a live value label under the track (pass `props.tooltip` for Nuxt UI tooltips when `UApp` provides TooltipProvider). Value: `number` or `[number, number]`.
+  - **`pin`** — `UPinInput` with `length` (default 6), `inputType` (`number`|`text`, maps to UPinInput `type` — renamed to avoid clashing with schema `type: 'pin'`), `mask`, `otp`. Value: joined `string`.
+
 ## [0.4.0] - 2026-11-25
 
 ### Added
