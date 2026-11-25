@@ -21,9 +21,15 @@ jobs:
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
+          # Keep Node 20 (engines) but use a current npm — 10.8.x left
+          # packument readme/readmeFilename empty for this package even though
+          # README.md was in the tarball (see RELEASING.md).
           node-version: "20"
           registry-url: https://registry.npmjs.org
           cache: npm
+
+      - name: Use current npm for publish metadata
+        run: npm install -g npm@latest
 
       - name: Install, prepare, and build
         env:
@@ -42,6 +48,51 @@ jobs:
             echo "::error::Git tag v$TAG does not match package.json version $PKG"
             exit 1
           fi
+
+      - name: Verify publish manifest includes README
+        run: |
+          node <<'NODE'
+          const { execSync } = require('node:child_process')
+          const fs = require('node:fs')
+          const path = require('node:path')
+
+          if (!fs.existsSync('README.md')) {
+            console.error('README.md missing at package root')
+            process.exit(1)
+          }
+          const files = require('./package.json').files || []
+          if (!files.includes('README.md')) {
+            console.error('package.json "files" must list README.md so packument metadata stays reliable')
+            process.exit(1)
+          }
+
+          // Load @npmcli/package-json from the same npm that will run `npm publish`
+          // (resolved via the npm binary — `npm root -g` can be wrong under some setups).
+          const npmBin = fs.realpathSync(
+            execSync('command -v npm', { encoding: 'utf8' }).trim(),
+          )
+          const npmPkgRoot = path.resolve(path.dirname(npmBin), '..')
+          const PackageJson = require(path.join(npmPkgRoot, 'node_modules/@npmcli/package-json'))
+
+          PackageJson.prepare('.').then((pkg) => {
+            const { readme, readmeFilename } = pkg.content
+            const len = typeof readme === 'string' ? readme.length : 0
+            console.log(`prepare(): readmeFilename=${readmeFilename} readmeBytes=${len}`)
+            if (!readmeFilename || len < 32 || String(readme).startsWith('ERROR:')) {
+              console.error('Publish manifest would ship without a usable README — aborting')
+              process.exit(1)
+            }
+          }).catch((err) => {
+            console.error(err)
+            process.exit(1)
+          })
+          NODE
+
+          # Confirm the packed tarball contains README.md (files list + always-include).
+          npm pack --ignore-scripts >/dev/null
+          REAL="$(ls -1 ./*.tgz | head -1)"
+          tar -tzf "$REAL" | grep -E '^package/README\.md$'
+          rm -f "$REAL"
 
       - name: Publish to npm
         env:
