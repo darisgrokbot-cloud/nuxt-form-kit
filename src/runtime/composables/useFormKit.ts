@@ -7,6 +7,7 @@ import { createRegistry } from '../core/registry'
 import type { FormKitRegistryInstance } from '../core/registry'
 import { validateSync, validateValue } from '../core/rules'
 import type { RuleContext } from '../core/rules'
+import { knownFieldTypes } from '../core/builtinTypes'
 import {
   buildInitialValues, buildPayload, dependentsOf, emptyValueOf, flattenFields, isFieldVisible, validateSchema,
 } from '../core/schema'
@@ -79,7 +80,7 @@ export function useFormKit(schemaInput: MaybeRefOrGetter<FormSchema>, options: U
   const flatByKey = computed(() => new Map(flat.value.map(f => [f.field.key, f])))
 
   if (import.meta.dev) {
-    for (const issue of validateSchema(schema.value, undefined)) {
+    for (const issue of validateSchema(schema.value, knownFieldTypes(registry.fields))) {
       const log = issue.level === 'error' ? console.error : console.warn
       log(`[form-kit] ${issue.message}`)
     }

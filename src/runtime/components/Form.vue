@@ -4,6 +4,7 @@ import type { FormKitInstance } from '../composables/useFormKit'
 import { useFormKit } from '../composables/useFormKit'
 import type { FieldError, FormMode, FormSchema, Messages, RuleFn, ServerError, SourceFn, Values } from '../core/types'
 import { FORM_KIT_KEY, FORM_KIT_SLOTS } from '../internal/context'
+import { focusFirstError } from '../internal/focusFirstError'
 import NodeRenderer from '../internal/NodeRenderer.vue'
 
 type ValidateOn = 'input' | 'change' | 'blur'
@@ -28,6 +29,8 @@ const props = withDefaults(defineProps<{
   resetLabel?: string
   /** แปลงค่าก่อนส่ง submit */
   omitHidden?: boolean
+  /** โฟกัส + เลื่อนไปฟิลด์ error แรกเมื่อ validation ไม่ผ่าน (default: true) */
+  focusOnError?: boolean
 }>(), {
   schema: undefined,
   form: undefined,
@@ -40,6 +43,7 @@ const props = withDefaults(defineProps<{
   validateOn: () => ['blur', 'change'],
   submitLabel: undefined,
   resetLabel: undefined,
+  focusOnError: true,
 })
 
 const model = defineModel<Values>({ default: () => ({}) })
@@ -83,8 +87,9 @@ async function onSubmit() {
   }
 }
 
-function onError(event: { errors: { name?: string, message: string }[] }) {
+function onError(event: { errors: { id?: string, name?: string, message: string }[] }) {
   emit('error', event.errors.map(e => ({ name: e.name ?? '', message: e.message })))
+  focusFirstError(event.errors, props.focusOnError)
 }
 
 async function submit() {
