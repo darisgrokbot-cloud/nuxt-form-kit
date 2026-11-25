@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+<!-- Next release: rename this section to ## [0.3.1] - YYYY-MM-DD, bump package.json, add a fresh empty [Unreleased], then tag v0.3.1. -->
+
 ### Changed
 
 - README lockup images use absolute `raw.githubusercontent.com` URLs so the logo renders on npm (package tarball does not include `assets/`).
@@ -16,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - README note that Schema Form is not affiliated with FormKit ([formkit.com](https://formkit.com)).
 - Migration guide from `nuxt-form-kit` 0.1.0 in this changelog.
+- `release.yml` creates a GitHub Release from the matching CHANGELOG section when a `v*` tag is pushed (in addition to npm publish).
 
 ## [0.3.0] - 2026-11-25
 
