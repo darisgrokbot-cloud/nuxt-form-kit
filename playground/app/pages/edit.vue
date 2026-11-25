@@ -6,7 +6,7 @@ const schema = defineFormSchema([
   { key: 'province_id', type: 'select', label: 'จังหวัด', options: { source: 'provinces' }, layout: { span: { base: 12, md: 4 } } },
   { key: 'district_id', type: 'select', label: 'อำเภอ', options: { source: 'districts', params: { province_id: '{{province_id}}' }, dependsOn: ['province_id'] }, layout: { span: { base: 12, md: 4 } } },
   { key: 'subdistrict_id', type: 'select', label: 'ตำบล', options: { source: 'subdistricts', params: { district_id: '{{district_id}}' }, dependsOn: ['district_id'] }, layout: { span: { base: 12, md: 4 } } },
-  { key: 'department_id', type: 'autocomplete', label: 'ฝ่าย (อยู่หน้าหลังๆ)', options: { source: 'departments', labelFrom: 'department_name' }, layout: { span: { base: 12, md: 6 } } },
+  { key: 'department_id', type: 'autocomplete', label: 'ทีม (อยู่หน้าหลังๆ)', options: { source: 'departments', labelFrom: 'department_name' }, layout: { span: { base: 12, md: 6 } } },
   { key: 'budget', type: 'money', label: 'งบประมาณ', layout: { span: { base: 12, md: 6 } } },
   { key: 'active', type: 'switch', label: 'ใช้งาน', layout: { span: { base: 12, md: 4 } } },
   { key: 'start_date', type: 'date', label: 'วันเริ่ม', layout: { span: { base: 12, md: 4 } } },
@@ -30,7 +30,7 @@ onMounted(async () => {
     district_id: 5002,
     subdistrict_id: 500201,
     department_id: 88,
-    department_name: 'ฝ่าย 088',
+    department_name: 'ทีม 088',
     budget: 125000.5,
     active: true,
     start_date: '2026-11-01',
@@ -42,7 +42,7 @@ onMounted(async () => {
 function simulateServerError() {
   serverErrors.value = [
     { field: 'title', message: 'ชื่อเรื่องซ้ำกับรายการอื่น' },
-    { key: 'budget', msg: 'งบเกินวงเงินที่อนุมัติ' },
+    { key: 'budget', msg: 'งบเกินวงเงินที่กำหนด' },
   ]
 }
 

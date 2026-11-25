@@ -25,7 +25,7 @@ export const subdistricts = [
 
 export const departments = Array.from({ length: 95 }, (_, i) => ({
   id: i + 1,
-  name: `ฝ่าย ${String(i + 1).padStart(3, '0')}${i % 7 === 0 ? ' (บริหารความเสี่ยง)' : ''}`,
+  name: `ทีม ${String(i + 1).padStart(3, '0')}${i % 7 === 0 ? ' (โปรเจกต์สำคัญ)' : ''}`,
   code: `D${String(i + 1).padStart(3, '0')}`,
 }))
 
