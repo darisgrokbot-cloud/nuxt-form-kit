@@ -51,7 +51,7 @@ const text = computed(() => {
 <template>
   <p
     class="text-sm text-default whitespace-pre-line break-words min-h-8 py-1.5"
-    :data-fk-display="field.key"
+    :data-sf-display="field.key"
   >
     {{ text }}
   </p>

@@ -10,9 +10,6 @@ export interface SchemaFormRegistry {
   translate?: (text: string) => string
 }
 
-/** @deprecated Use `SchemaFormRegistry` instead. */
-export type FormKitRegistry = SchemaFormRegistry
-
 export interface RegisterOptions {
   sources?: Record<string, SourceFn>
   rules?: Record<string, RuleFn>
@@ -39,6 +36,3 @@ export function createRegistry(initial: RegisterOptions = {}) {
 }
 
 export type SchemaFormRegistryInstance = ReturnType<typeof createRegistry>
-
-/** @deprecated Use `SchemaFormRegistryInstance` instead. */
-export type FormKitRegistryInstance = SchemaFormRegistryInstance

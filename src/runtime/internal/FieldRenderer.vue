@@ -89,8 +89,8 @@ const fieldSlot = computed(() => slots[`field:${key.value}`])
     :help="readonly ? undefined : form.t(field.help)"
     :required="required && !readonly"
     :error="options?.error ?? undefined"
-    :data-fk-field="key"
-    :data-fk-type="field.type"
+    :data-sf-field="key"
+    :data-sf-type="field.type"
   >
     <SlotOutlet
       v-if="fieldSlot"

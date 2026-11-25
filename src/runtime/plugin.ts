@@ -9,8 +9,6 @@ export default defineNuxtPlugin({
     return {
       provide: {
         schemaForm: registry,
-        /** @deprecated Use `$schemaForm` instead. */
-        formKit: registry,
       },
     }
   },
