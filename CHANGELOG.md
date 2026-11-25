@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Opt-in **container-query grid** mode: `schemaForm.grid.responsive: 'viewport' | 'container'` (default `'viewport'`) and a matching `responsive` prop on `<SfForm>`. In `container` mode the form root gets `@container` and `layout.span` breakpoints use Tailwind v4 container variants (`@sm:` / `@md:` / `@lg:` / `@xl:`) so forms in narrow sidebars no longer follow the viewport width.
 - Component tests for `<SfForm>` and main field types via `@nuxt/test-utils` (separate Vitest `components` project + CI job), keeping core unit tests in a fast Node project.
 
 ### Fixed

@@ -23,6 +23,7 @@ export default defineNuxtConfig({
   modules: ['@nuxt/ui', '@stackcloud/schema-form'],
   schemaForm: {
     // prefix: 'Sf', // default → <SfForm>
+    // grid: { responsive: 'viewport' }, // default — see Grid responsive modes
   },
 })
 ```
@@ -54,6 +55,45 @@ async function save(payload: Record<string, unknown>) {
 ```
 
 On validation error, `SfForm` focuses and scrolls to the first invalid field by default. Set `:focus-on-error="false"` to disable that behavior (the `@error` event still fires).
+
+## Grid responsive modes
+
+`layout.span` breakpoints (`sm` / `md` / `lg` / `xl`) can follow either the **viewport** or the **form container**:
+
+| Mode | Classes | When to use |
+| --- | --- | --- |
+| `viewport` (default) | `sm:col-span-*`, `md:col-span-*`, … | Full-width pages and drawers that already match the screen width. |
+| `container` | `@sm:col-span-*`, `@md:col-span-*`, … | Forms in a narrow sidebar, split pane, or card on a wide screen — columns size to the form width, not the window. |
+
+Default stays `viewport` so existing apps keep the same layout. Opt in app-wide:
+
+```ts
+// nuxt.config.ts
+export default defineNuxtConfig({
+  modules: ['@nuxt/ui', '@stackcloud/schema-form'],
+  schemaForm: {
+    grid: { responsive: 'container' },
+  },
+})
+```
+
+Or per form (overrides the module default):
+
+```vue
+<template>
+  <!-- Product filter in a 320px sidebar on a desktop layout -->
+  <aside class="w-80 border-r border-default p-4">
+    <SfForm
+      v-model="filters"
+      :schema="filterSchema"
+      responsive="container"
+      submit-label="Apply"
+    />
+  </aside>
+</template>
+```
+
+In `container` mode the form root gets Tailwind’s `@container` class. Both viewport and container class maps are written as full string literals in the module runtime so Tailwind v4’s scanner (via the module’s injected CSS `@source`, or your own `@source` when `schemaForm.css: false`) keeps every variant.
 
 ## Docs
 

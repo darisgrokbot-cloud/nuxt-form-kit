@@ -11,6 +11,12 @@ export type FormMode = 'create' | 'edit' | 'view'
 /* ----------------------------- Layout ----------------------------- */
 
 export type Breakpoint = 'base' | 'sm' | 'md' | 'lg' | 'xl'
+/**
+ * How layout.span breakpoints resolve:
+ * - `viewport` — Tailwind screen variants (`sm:`, `md:`, …)
+ * - `container` — Tailwind v4 container variants (`@sm:`, `@md:`, …) against the form root
+ */
+export type GridResponsive = 'viewport' | 'container'
 /** จำนวนคอลัมน์จาก 12 — ตัวเลขเดียว = ทุกขนาดจอ, object = แยกตาม breakpoint */
 export type Span = number | Partial<Record<Breakpoint, number>>
 
