@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Built-in field types for the upcoming **0.5.0** minor (no version bump in this branch):
+- Built-in field types (planned for the next minor release; package remains **0.4.0** until that release is approved):
   - **`color`** — Nuxt UI `UColorPicker` in a `UPopover` (swatch + hex/`rgb`/`hsl`/`cmyk`/`lab` input, optional `swatches`). Value: `string | null`.
   - **`file`** — `UFileUpload` with `accept`, `multiple`, `maxSize` / `maxFiles` (messages `fileTooLarge` / `tooManyFiles`), and image `preview`. Value: `File | File[] | null`.
   - **`tags`** — `UInputTags` with `max`, `unique` (default `true`), `placeholder`. Value: `string[]`.
@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **`datetime`** — `UInputDate` + `CalendarDateTime` (`granularity` minute/second, `min` / `max`). Value: local ISO `YYYY-MM-DDTHH:mm` (or with seconds) | `null`.
   - **`slider`** — `USlider` with `min` / `max` / `step` / `range`; `showValue` renders a live value label under the track (pass `props.tooltip` for Nuxt UI tooltips when `UApp` provides TooltipProvider). Value: `number` or `[number, number]`.
   - **`pin`** — `UPinInput` with `length` (default 6), `inputType` (`number`|`text`, maps to UPinInput `type` — renamed to avoid clashing with schema `type: 'pin'`), `mask`, `otp`. Value: joined `string`.
+
+### Fixed
+
+- Ensure npm packument `readme` / `readmeFilename` are populated on the next publish (explicitly ship `README.md` in `files`, verify the publish manifest before `npm publish`). Registry metadata for already-published 0.2–0.4 stays empty until a new version is published — do not republish those tags.
 
 ## [0.4.0] - 2026-11-25
 
