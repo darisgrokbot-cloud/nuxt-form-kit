@@ -4,9 +4,13 @@
 /*  function ใช้ได้เป็นทางเลือกในโหมดโค้ด แต่ไม่จำเป็น                 */
 /* ------------------------------------------------------------------ */
 
+import type { StandardSchemaV1 } from '@standard-schema/spec'
+
 export type Values = Record<string, any>
 export type Primitive = string | number | boolean | null
 export type FormMode = 'create' | 'edit' | 'view'
+
+export type { StandardSchemaV1 }
 
 /* ----------------------------- Layout ----------------------------- */
 
@@ -204,6 +208,11 @@ export interface BaseField<T extends string = string> extends BaseNode {
   help?: string
   defaultValue?: unknown
   rules?: Rules
+  /**
+   * Per-field Standard Schema validator (Zod / Valibot / ArkType / …).
+   * Runs after the `rules` DSL; first error wins.
+   */
+  standard?: StandardSchemaV1
   requiredWhen?: Condition
   disabledWhen?: Condition
   /** แสดงเป็นข้อความ (เหมือน view mode) */
@@ -329,6 +338,21 @@ export interface SlotNode extends BaseNode {
 export type LayoutNode = SectionNode | RowNode | SlotNode
 export type SchemaNode = LayoutNode | FieldSchema
 export type FormSchema = SchemaNode[]
+
+/**
+ * Form schema with an optional form-level Standard Schema validator.
+ * Prefer this when you want typed values from Zod / Valibot / ArkType.
+ */
+export interface FormSchemaConfig {
+  fields: FormSchema
+  /** Form-level Standard Schema (Zod / Valibot / ArkType / …) */
+  schema?: StandardSchemaV1
+  /** Alias for `schema` */
+  validate?: StandardSchemaV1
+}
+
+/** Input accepted by defineFormSchema / useSchemaForm / SfForm */
+export type FormSchemaInput = FormSchema | FormSchemaConfig
 
 /* ----------------------------- Errors ----------------------------- */
 

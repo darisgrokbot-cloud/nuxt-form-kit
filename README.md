@@ -95,6 +95,78 @@ Or per form (overrides the module default):
 
 In `container` mode the form root gets Tailwind’s `@container` class. Both viewport and container class maps are written as full string literals in the module runtime so Tailwind v4’s scanner (via the module’s injected CSS `@source`, or your own `@source` when `schemaForm.css: false`) keeps every variant.
 
+## Typed values
+
+`defineFormSchema` + `InferFormValues` narrow payload types from field definitions. Untyped usage still defaults to `Record<string, any>`.
+
+```ts
+const schema = defineFormSchema([
+  { key: 'title', type: 'text' },
+  { key: 'budget', type: 'money' },
+  { key: 'active', type: 'switch' },
+])
+
+type ProjectValues = InferFormValues<typeof schema>
+// { title: string | null, budget: number | null, active: boolean }
+
+const form = useSchemaForm(schema)
+form.getPayload().budget // number | null
+```
+
+## Standard Schema validation
+
+Validate with any [Standard Schema](https://standardschema.dev) library (Zod, Valibot, ArkType, …) alongside the existing `rules` DSL. Only `@standard-schema/spec` types are a runtime dependency of this package — install Zod/Valibot/ArkType yourself.
+
+### Form-level (`validate` / `schema`)
+
+```ts
+import { z } from 'zod'
+
+const fields = defineFormSchema([
+  { key: 'email', type: 'email', label: 'Email' },
+  { key: 'password', type: 'password', label: 'Password' },
+])
+
+const signUp = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+})
+
+// Option A — prop / composable option
+const form = useSchemaForm(fields, { validate: signUp })
+// Option B — config object (same Standard Schema; typed via InferOutput)
+const schema = defineFormSchema({ fields, schema: signUp })
+type SignUpValues = InferFormValues<typeof schema> // { email: string, password: string }
+```
+
+```vue
+<SfForm :schema="fields" :validate="signUp" submit-label="Create account" @submit="onSubmit" />
+```
+
+Issues are mapped by `path[0]` → field key. Async `~standard.validate` is supported. The `rules` DSL still runs first per field; Standard Schema errors fill in remaining fields.
+
+### Per-field `standard`
+
+```ts
+defineFormSchema([
+  {
+    key: 'email',
+    type: 'email',
+    label: 'Email',
+    rules: { required: true },
+    standard: z.string().email('Enter a valid email'),
+  },
+  {
+    key: 'guests',
+    type: 'number',
+    label: 'Guests',
+    standard: z.number().int().min(1).max(20),
+  },
+])
+```
+
+When a form-level Standard Schema is present, `InferFormValues` / `useSchemaForm` prefer its `InferOutput` over field-type inference.
+
 ## Docs
 
 Full documentation: [https://schema-form.stackcloud.cc](https://schema-form.stackcloud.cc)

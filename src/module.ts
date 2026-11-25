@@ -29,6 +29,9 @@ export interface ModuleOptions {
 
 export type * from './runtime/core/types'
 export type {
+  InferFieldValue, InferFormValues, InferFormValuesFromFields,
+} from './runtime/core/infer'
+export type {
   SchemaFormInstance, UseSchemaFormOptions,
 } from './runtime/composables/useSchemaForm'
 export type { FieldOptionsState } from './runtime/composables/useFieldOptions'
@@ -37,6 +40,7 @@ export type {
   SchemaFormRegistry, RegisterOptions,
 } from './runtime/core/registry'
 export type { PayloadOptions, SchemaIssue } from './runtime/core/schema'
+export type { StandardSchemaV1 } from './runtime/core/standard-schema'
 
 const defaults: ModuleOptions = {
   prefix: 'Sf',
