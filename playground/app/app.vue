@@ -3,7 +3,7 @@
     <div class="min-h-screen bg-muted/40">
       <header class="border-b border-default bg-default">
         <nav class="mx-auto flex max-w-5xl flex-wrap items-center gap-4 px-4 py-3 text-sm">
-          <strong>form-kit playground</strong>
+          <strong>schema-form playground</strong>
           <NuxtLink to="/" class="hover:underline">
             ทุกชนิดฟิลด์
           </NuxtLink>

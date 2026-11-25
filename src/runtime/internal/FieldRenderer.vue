@@ -119,7 +119,7 @@ const fieldSlot = computed(() => slots[`field:${key.value}`])
       :locale="form.locale.value"
     />
     <p v-else class="text-sm text-error">
-      [form-kit] unknown field type "{{ field.type }}"
+      [schema-form] unknown field type "{{ field.type }}"
     </p>
   </UFormField>
 </template>

@@ -152,7 +152,7 @@ function onSubmit(payload: Record<string, unknown>) {
 
 <template>
   <div class="grid gap-6 lg:grid-cols-[1fr_320px]">
-    <FkForm
+    <SfForm
       ref="formRef"
       v-model="data"
       :schema="schema"
@@ -171,7 +171,7 @@ function onSubmit(payload: Record<string, unknown>) {
           data-testid="slot-content"
         />
       </template>
-    </FkForm>
+    </SfForm>
 
     <aside class="space-y-4 text-xs lg:sticky lg:top-4 lg:self-start">
       <div class="rounded-lg border border-default bg-default p-3">

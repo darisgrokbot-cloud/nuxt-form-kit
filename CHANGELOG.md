@@ -7,17 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-
-- Disclaimer that this package is **not affiliated with FormKit (formkit.com)** in the README and `package.json` description.
-- `FkForm` prop `focusOnError` (default `true`): on validation error, focus and smoothly scroll to the first invalid field (Nuxt UI Form pattern). Set to `false` to keep emitting `@error` without focusing.
-- `CHANGELOG.md` (this file).
-- Dev-time schema checks in `useFormKit` now pass the real set of known field types (builtins + custom registry fields) into `validateSchema`.
-
 ### Changed
 
-- `@nuxt/ui` moved from `dependencies` to `peerDependencies`. Consumers must install and register `@nuxt/ui` themselves.
-- README install instructions updated accordingly.
+- **Package rename:** `nuxt-form-kit` → **`@stackcloud/schema-form`** (display name **Schema Form**).
+- Module `configKey`: `formKit` → `schemaForm` (legacy `formKit` still read with a dev warning).
+- Default component prefix: `Fk` → `Sf` (`FkForm` → `SfForm`). `Fk*` components remain registered as deprecated aliases.
+- Composables: `useFormKit` → `useSchemaForm`, `useFormKitRegistry` → `useSchemaFormRegistry` (old names re-exported as deprecated aliases).
+- Plugin provide: `$formKit` → `$schemaForm` (`$formKit` still provided as an alias to the same registry).
+- `@nuxt/ui` moved from `dependencies` to `peerDependencies` (`^4.13.0`); kept in `devDependencies`. Consumers must install `@nuxt/ui` themselves.
+- README install instructions updated for the new package name and peer dependency.
+
+### Added
+
+- `SfForm` / `FkForm` prop `focusOnError` (default `true`): on validation error, focus and smoothly scroll to the first invalid field (Nuxt UI Form pattern). Set to `false` to keep emitting `@error` without focusing.
+- Dev-time schema checks in `useSchemaForm` pass the real set of known field types (builtins + custom registry fields) into `validateSchema`.
+- `CHANGELOG.md` (this file).
+
+### Migration guide (`nuxt-form-kit` → `@stackcloud/schema-form`)
+
+1. Install the new package and peer UI kit:
+   ```bash
+   npm uninstall nuxt-form-kit
+   npm i @stackcloud/schema-form @nuxt/ui
+   ```
+2. In `nuxt.config.ts`, replace the module id and config key:
+   ```ts
+   export default defineNuxtConfig({
+     modules: ['@nuxt/ui', '@stackcloud/schema-form'],
+     schemaForm: { /* was formKit */ },
+   })
+   ```
+3. Prefer the new APIs (`useSchemaForm`, `useSchemaFormRegistry`, `$schemaForm`, `<SfForm>`). Old names keep working for one version with deprecation warnings where applicable.
+4. Update TypeScript imports from `nuxt-form-kit` / `nuxt-form-kit/core` to `@stackcloud/schema-form` / `@stackcloud/schema-form/core`.
 
 ## [0.1.0] - 2026-11-24
 

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, provide, ref, useSlots, watch } from 'vue'
-import type { FormKitInstance } from '../composables/useFormKit'
-import { useFormKit } from '../composables/useFormKit'
+import type { SchemaFormInstance } from '../composables/useSchemaForm'
+import { useSchemaForm } from '../composables/useSchemaForm'
 import type { FieldError, FormMode, FormSchema, Messages, RuleFn, ServerError, SourceFn, Values } from '../core/types'
-import { FORM_KIT_KEY, FORM_KIT_SLOTS } from '../internal/context'
+import { SCHEMA_FORM_KEY, SCHEMA_FORM_SLOTS } from '../internal/context'
 import { focusFirstError } from '../internal/focusFirstError'
 import NodeRenderer from '../internal/NodeRenderer.vue'
 
@@ -12,8 +12,8 @@ type ValidateOn = 'input' | 'change' | 'blur'
 const props = withDefaults(defineProps<{
   /** schema ของฟอร์ม (ไม่ต้องส่งถ้าส่ง form) */
   schema?: FormSchema
-  /** instance จาก useFormKit() — ใช้เมื่อต้องการควบคุมจากภายนอก */
-  form?: FormKitInstance
+  /** instance จาก useSchemaForm() — ใช้เมื่อต้องการควบคุมจากภายนอก */
+  form?: SchemaFormInstance
   mode?: FormMode
   disabled?: boolean
   serverErrors?: ServerError[]
@@ -49,11 +49,11 @@ const props = withDefaults(defineProps<{
 const model = defineModel<Values>({ default: () => ({}) })
 
 const emit = defineEmits<{
-  submit: [payload: Values, form: FormKitInstance]
+  submit: [payload: Values, form: SchemaFormInstance]
   error: [errors: FieldError[]]
 }>()
 
-const form: FormKitInstance = props.form ?? useFormKit(() => props.schema ?? [], {
+const form: SchemaFormInstance = props.form ?? useSchemaForm(() => props.schema ?? [], {
   values: model,
   deferDefaults: true,
   mode: () => props.mode,
@@ -66,8 +66,8 @@ const form: FormKitInstance = props.form ?? useFormKit(() => props.schema ?? [],
 })
 
 const slots = useSlots()
-provide(FORM_KIT_KEY, form)
-provide(FORM_KIT_SLOTS, slots)
+provide(SCHEMA_FORM_KEY, form)
+provide(SCHEMA_FORM_SLOTS, slots)
 
 const uForm = ref()
 watch(uForm, (instance) => {
@@ -123,7 +123,7 @@ defineExpose({
     :validate="form.runValidation"
     :validate-on="validateOn"
     :disabled="disabled"
-    class="fk-form"
+    class="sf-form"
     @submit="onSubmit"
     @error="onError"
   >

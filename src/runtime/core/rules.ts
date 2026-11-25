@@ -112,7 +112,7 @@ export async function validateValue(value: unknown, rules: Rules | undefined, va
   for (const rule of rules.custom) {
     const fn = typeof rule === 'function' ? rule : ctx.customRules?.[rule]
     if (!fn) {
-      console.warn(`[form-kit] custom rule "${String(rule)}" is not registered`)
+      console.warn(`[schema-form] custom rule "${String(rule)}" is not registered`)
       continue
     }
     const error = toMessage(await fn(value, values))

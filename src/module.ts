@@ -1,41 +1,49 @@
 import {
   addComponentsDir, addImports, addImportsDir, addPlugin, addTemplate, createResolver, defineNuxtModule,
 } from '@nuxt/kit'
+import { defu } from 'defu'
 import type { Messages } from './runtime/core/types'
 
 export interface ModuleOptions {
-  /** prefix ของ component เช่น Fk → <FkForm> (default: 'Fk') */
+  /** Component prefix, e.g. Sf → <SfForm> (default: 'Sf') */
   prefix: string
-  /** ภาษาของข้อความ validation: 'th' | 'en' (default: 'th') */
+  /** Validation message locale: 'th' | 'en' (default: 'th') */
   locale: string
-  /** override ข้อความ validation ทั้งแอป */
+  /** Override validation messages app-wide */
   messages?: Partial<Messages>
   /**
-   * ใส่ CSS ของ Tailwind + Nuxt UI ให้อัตโนมัติ (default: true)
-   * ถ้าแอปมี main.css ที่ import tailwindcss / @nuxt/ui เองอยู่แล้ว ให้ตั้งเป็น false
-   * แล้วเพิ่ม @source ตาม README
+   * Inject Tailwind + Nuxt UI CSS automatically (default: true).
+   * Set false if the app already imports tailwindcss / @nuxt/ui, then add @source
+   * for this package as described in the README.
    */
   css: boolean
 }
 
 export type * from './runtime/core/types'
-export type { FormKitInstance, UseFormKitOptions } from './runtime/composables/useFormKit'
+export type {
+  SchemaFormInstance, UseSchemaFormOptions,
+  FormKitInstance, UseFormKitOptions,
+} from './runtime/composables/useSchemaForm'
 export type { FieldOptionsState } from './runtime/composables/useFieldOptions'
 export type { FieldComponentProps, FieldOptionsView } from './runtime/internal/types'
-export type { FormKitRegistry, RegisterOptions } from './runtime/core/registry'
+export type {
+  SchemaFormRegistry, FormKitRegistry, RegisterOptions,
+} from './runtime/core/registry'
 export type { PayloadOptions, SchemaIssue } from './runtime/core/schema'
+
+const defaults: ModuleOptions = {
+  prefix: 'Sf',
+  locale: 'th',
+  css: true,
+}
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
-    name: 'nuxt-form-kit',
-    configKey: 'formKit',
+    name: '@stackcloud/schema-form',
+    configKey: 'schemaForm',
     compatibility: { nuxt: '>=4.0.0' },
   },
-  defaults: {
-    prefix: 'Fk',
-    locale: 'th',
-    css: true,
-  },
+  defaults,
   moduleDependencies: {
     '@nuxt/ui': {},
   },
@@ -43,20 +51,44 @@ export default defineNuxtModule<ModuleOptions>({
     const { resolve } = createResolver(import.meta.url)
     const runtimeDir = resolve('./runtime')
 
+    const nuxtOpts = nuxt.options as typeof nuxt.options & {
+      schemaForm?: Partial<ModuleOptions>
+      formKit?: Partial<ModuleOptions>
+    }
+
+    if (nuxtOpts.formKit && import.meta.dev) {
+      console.warn('[schema-form] nuxt.config key `formKit` is deprecated; rename it to `schemaForm`.')
+    }
+
+    const resolved = defu(nuxtOpts.schemaForm, nuxtOpts.formKit, options, defaults) as ModuleOptions
+
     const publicConfig = nuxt.options.runtimeConfig.public as Record<string, unknown>
-    publicConfig.formKit = {
-      locale: options.locale,
-      messages: options.messages ?? {},
+    const formPublic = {
+      locale: resolved.locale,
+      messages: resolved.messages ?? {},
+      ...(publicConfig.schemaForm as object | undefined),
       ...(publicConfig.formKit as object | undefined),
     }
+    publicConfig.schemaForm = formPublic
+    // Deprecated alias for apps still reading runtimeConfig.public.formKit
+    publicConfig.formKit = formPublic
 
     addPlugin(resolve('./runtime/plugin'))
 
     addComponentsDir({
       path: resolve('./runtime/components'),
-      prefix: options.prefix,
+      prefix: resolved.prefix,
       pathPrefix: false,
     })
+
+    // Deprecated Fk* aliases for one major/minor cycle
+    if (resolved.prefix !== 'Fk') {
+      addComponentsDir({
+        path: resolve('./runtime/components'),
+        prefix: 'Fk',
+        pathPrefix: false,
+      })
+    }
 
     addImportsDir(resolve('./runtime/composables'))
     addImports([
@@ -65,16 +97,14 @@ export default defineNuxtModule<ModuleOptions>({
 
     nuxt.options.build.transpile.push(runtimeDir)
 
-    if (options.css) {
+    if (resolved.css) {
       const toPosix = (p: string) => p.replaceAll('\\', '/')
       const template = addTemplate({
-        filename: 'form-kit.css',
+        filename: 'schema-form.css',
         write: true,
         getContents: () => [
           '@import "tailwindcss";',
           '@import "@nuxt/ui";',
-          // ให้ Tailwind scan class ที่ใช้ใน component ของ form-kit
-          // ต้องเป็น absolute path — Tailwind ใน Nuxt resolve @source จาก root ของแอป ไม่ใช่จากไฟล์ CSS
           `@source "${toPosix(runtimeDir)}";`,
           '',
         ].join('\n'),

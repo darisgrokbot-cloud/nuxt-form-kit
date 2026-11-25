@@ -1,7 +1,7 @@
 {
-  "name": "nuxt-form-kit",
+  "name": "@stackcloud/schema-form",
   "version": "0.1.0",
-  "description": "Schema-driven form inputs for Nuxt 4, built on Nuxt UI. Not affiliated with FormKit (formkit.com).",
+  "description": "Schema Form — schema-driven form inputs for Nuxt 4, built on Nuxt UI (formerly nuxt-form-kit).",
   "license": "MIT",
   "type": "module",
   "repository": {
@@ -51,13 +51,14 @@
     "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
   },
   "peerDependencies": {
-    "nuxt": "^4.0.0",
-    "@nuxt/ui": "^4.13.0"
+    "@nuxt/ui": "^4.13.0",
+    "nuxt": "^4.0.0"
   },
   "dependencies": {
     "@iconify-json/lucide": "^1.2.158",
     "@internationalized/date": "^3.12.4",
-    "@nuxt/kit": "^4.6.4"
+    "@nuxt/kit": "^4.6.4",
+    "defu": "^6.1.7"
   },
   "devDependencies": {
     "@nuxt/module-builder": "^1.0.4",
@@ -75,6 +76,7 @@
     "nuxt-ui",
     "form",
     "schema",
+    "schema-form",
     "dynamic-form"
   ],
   "engines": {

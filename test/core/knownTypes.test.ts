@@ -20,7 +20,7 @@ describe('knownFieldTypes', () => {
 })
 
 describe('validateSchema with real known types', () => {
-  it('accepts builtin types and rejects unknown ones (as useFormKit does in dev)', () => {
+  it('accepts builtin types and rejects unknown ones (as useSchemaForm does in dev)', () => {
     const known = knownFieldTypes()
     const ok: FormSchema = [
       { key: 'name', type: 'text', rules: { required: true } },

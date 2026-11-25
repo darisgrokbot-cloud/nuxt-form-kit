@@ -5,9 +5,9 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
   compatibilityDate: '2026-11-01',
   alias: {
-    'nuxt-form-kit': fileURLToPath(new URL('../src/module.ts', import.meta.url)),
+    '@stackcloud/schema-form': fileURLToPath(new URL('../src/module.ts', import.meta.url)),
   },
-  formKit: {
+  schemaForm: {
     locale: 'th',
   },
 })

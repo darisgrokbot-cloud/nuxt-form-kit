@@ -2,7 +2,7 @@
 
 ## One-time setup
 
-1. Create an npm **Automation** (or granular publish) token for `nuxt-form-kit`.
+1. Create an npm **Automation** (or granular publish) token for `@stackcloud/schema-form`.
 2. Add GitHub Actions secret `NPM_TOKEN` with that value.
 
 ## Publish

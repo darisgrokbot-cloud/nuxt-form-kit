@@ -2,12 +2,15 @@ import { defineNuxtPlugin } from '#imports'
 import { createRegistry } from './core/registry'
 
 export default defineNuxtPlugin({
-  name: 'form-kit:registry',
+  name: 'schema-form:registry',
   enforce: 'pre',
   setup() {
+    const registry = createRegistry()
     return {
       provide: {
-        formKit: createRegistry(),
+        schemaForm: registry,
+        /** @deprecated Use `$schemaForm` instead. */
+        formKit: registry,
       },
     }
   },
