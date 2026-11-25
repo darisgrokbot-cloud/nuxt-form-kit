@@ -4,7 +4,7 @@ import { findOption, mergeOptions, normalizeOptions, normalizeSourceResult, sear
 import { resolveTemplate } from '../core/template'
 import type { FieldSchema, OptionItem, OptionsConfig, Primitive, SourceFn } from '../core/types'
 import { debounce, isEmpty } from '../core/utils'
-import type { FormKitInstance } from './useFormKit'
+import type { SchemaFormInstance } from './useSchemaForm'
 
 export interface FieldOptionsState {
   items: Ref<OptionItem[]>
@@ -24,7 +24,7 @@ function asArray(value: unknown): Primitive[] {
   return (Array.isArray(value) ? value : [value]) as Primitive[]
 }
 
-export function useFieldOptions(fieldRef: Ref<FieldSchema>, form: FormKitInstance): FieldOptionsState {
+export function useFieldOptions(fieldRef: Ref<FieldSchema>, form: SchemaFormInstance): FieldOptionsState {
   const field = computed(() => fieldRef.value)
   const key = computed(() => field.value.key)
   const cfg = computed<OptionsConfig>(() => (field.value as { options?: OptionsConfig }).options ?? {})
@@ -37,7 +37,7 @@ export function useFieldOptions(fieldRef: Ref<FieldSchema>, form: FormKitInstanc
     if (!src) return undefined
     if (typeof src === 'function') return src
     const fn = form.sources.value[src]
-    if (!fn) console.error(`[form-kit] source "${src}" is not registered (field "${key.value}")`)
+    if (!fn) console.error(`[schema-form] source "${src}" is not registered (field "${key.value}")`)
     return fn
   })
 
@@ -141,7 +141,7 @@ export function useFieldOptions(fieldRef: Ref<FieldSchema>, form: FormKitInstanc
     catch (e) {
       if (current.signal.aborted || (e as { name?: string })?.name === 'AbortError') return
       error.value = form.messages.value.loadError
-      console.error(`[form-kit] failed to load options for "${key.value}"`, e)
+      console.error(`[schema-form] failed to load options for "${key.value}"`, e)
     }
     finally {
       if (controller === current) {

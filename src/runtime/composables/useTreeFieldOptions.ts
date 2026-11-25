@@ -16,7 +16,7 @@ import {
   setTreeChildren,
 } from '../core/tree'
 import { isEmpty } from '../core/utils'
-import type { FormKitInstance } from './useFormKit'
+import type { SchemaFormInstance } from './useSchemaForm'
 import type { FieldOptionsState } from './useFieldOptions'
 
 export interface TreeFieldOptionsState extends FieldOptionsState {
@@ -33,7 +33,7 @@ function asArray(value: unknown): Primitive[] {
   return (Array.isArray(value) ? value : [value]) as Primitive[]
 }
 
-export function useTreeFieldOptions(fieldRef: Ref<FieldSchema>, form: FormKitInstance): TreeFieldOptionsState {
+export function useTreeFieldOptions(fieldRef: Ref<FieldSchema>, form: SchemaFormInstance): TreeFieldOptionsState {
   const field = computed(() => fieldRef.value)
   const key = computed(() => field.value.key)
   const cfg = computed<TreeOptionsConfig>(() => (field.value as { options?: TreeOptionsConfig }).options ?? {})
@@ -43,7 +43,7 @@ export function useTreeFieldOptions(fieldRef: Ref<FieldSchema>, form: FormKitIns
     if (!src) return undefined
     if (typeof src === 'function') return src as TreeSourceFn
     const fn = form.sources.value[src]
-    if (!fn) console.error(`[form-kit] source "${src}" is not registered (field "${key.value}")`)
+    if (!fn) console.error(`[schema-form] source "${src}" is not registered (field "${key.value}")`)
     return fn as TreeSourceFn | undefined
   })
 
@@ -129,7 +129,7 @@ export function useTreeFieldOptions(fieldRef: Ref<FieldSchema>, form: FormKitIns
     catch (e) {
       if (current.signal.aborted || (e as { name?: string })?.name === 'AbortError') return
       error.value = form.messages.value.loadError
-      console.error(`[form-kit] failed to load tree options for "${key.value}"`, e)
+      console.error(`[schema-form] failed to load tree options for "${key.value}"`, e)
     }
     finally {
       if (controller === current) {
@@ -172,7 +172,7 @@ export function useTreeFieldOptions(fieldRef: Ref<FieldSchema>, form: FormKitIns
     catch (e) {
       if (current.signal.aborted || (e as { name?: string })?.name === 'AbortError') return
       error.value = form.messages.value.loadError
-      console.error(`[form-kit] failed to load tree children for "${key.value}"`, e)
+      console.error(`[schema-form] failed to load tree children for "${key.value}"`, e)
     }
     finally {
       if (loadingParent.value === node.value) loadingParent.value = null

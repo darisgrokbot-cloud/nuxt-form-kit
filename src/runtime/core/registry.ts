@@ -1,7 +1,7 @@
 import type { Component } from 'vue'
 import type { RuleFn, SourceFn } from './types'
 
-export interface FormKitRegistry {
+export interface SchemaFormRegistry {
   sources: Record<string, SourceFn>
   rules: Record<string, RuleFn>
   /** field type เพิ่มเติม: ชื่อ type → component */
@@ -9,6 +9,9 @@ export interface FormKitRegistry {
   /** แปลข้อความ label/placeholder/hint (เช่นส่ง i18n key แล้วแปลด้วย $t) */
   translate?: (text: string) => string
 }
+
+/** @deprecated Use `SchemaFormRegistry` instead. */
+export type FormKitRegistry = SchemaFormRegistry
 
 export interface RegisterOptions {
   sources?: Record<string, SourceFn>
@@ -18,7 +21,7 @@ export interface RegisterOptions {
 }
 
 export function createRegistry(initial: RegisterOptions = {}) {
-  const registry: FormKitRegistry = {
+  const registry: SchemaFormRegistry = {
     sources: { ...initial.sources },
     rules: { ...initial.rules },
     fields: { ...initial.fields },
@@ -35,4 +38,7 @@ export function createRegistry(initial: RegisterOptions = {}) {
   return Object.assign(registry, { register })
 }
 
-export type FormKitRegistryInstance = ReturnType<typeof createRegistry>
+export type SchemaFormRegistryInstance = ReturnType<typeof createRegistry>
+
+/** @deprecated Use `SchemaFormRegistryInstance` instead. */
+export type FormKitRegistryInstance = SchemaFormRegistryInstance

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img">
+  <title>Schema Form favicon, option A</title>
+  <rect width="64" height="64" rx="14" fill="#0B8A5A"/>
+  <g transform="translate(6.0 6.0) scale(0.8125)">
+    <path fill="#FFFFFF" d="M 9 5 H 55 A 4 4 0 0 1 59 9 V 14 A 4 4 0 0 1 55 18 H 25 A 2 2 0 0 0 23 20 V 23.5 A 2 2 0 0 0 25 25.5 H 55 A 4 4 0 0 1 59 29.5 V 55 A 4 4 0 0 1 55 59 H 9 A 4 4 0 0 1 5 55 V 50 A 4 4 0 0 1 9 46 H 39 A 2 2 0 0 0 41 44 V 40.5 A 2 2 0 0 0 39 38.5 H 9 A 4 4 0 0 1 5 34.5 V 9 A 4 4 0 0 1 9 5 Z"/>
+  </g>
+</svg>

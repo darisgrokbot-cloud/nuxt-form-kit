@@ -1,16 +1,21 @@
 import { inject } from 'vue'
 import type { InjectionKey, Slots } from 'vue'
-import type { FormKitInstance } from '../composables/useFormKit'
+import type { SchemaFormInstance } from '../composables/useSchemaForm'
 
-export const FORM_KIT_KEY: InjectionKey<FormKitInstance> = Symbol('form-kit')
-export const FORM_KIT_SLOTS: InjectionKey<Slots> = Symbol('form-kit-slots')
+export const SCHEMA_FORM_KEY: InjectionKey<SchemaFormInstance> = Symbol('schema-form')
+export const SCHEMA_FORM_SLOTS: InjectionKey<Slots> = Symbol('schema-form-slots')
 
-export function useFormContext(): FormKitInstance {
-  const form = inject(FORM_KIT_KEY)
-  if (!form) throw new Error('[form-kit] field components must be used inside <FkForm>')
+/** @deprecated Use `SCHEMA_FORM_KEY` instead. */
+export const FORM_KIT_KEY = SCHEMA_FORM_KEY
+/** @deprecated Use `SCHEMA_FORM_SLOTS` instead. */
+export const FORM_KIT_SLOTS = SCHEMA_FORM_SLOTS
+
+export function useFormContext(): SchemaFormInstance {
+  const form = inject(SCHEMA_FORM_KEY)
+  if (!form) throw new Error('[schema-form] field components must be used inside <SfForm>')
   return form
 }
 
 export function useFormSlots(): Slots {
-  return inject(FORM_KIT_SLOTS, {} as Slots)
+  return inject(SCHEMA_FORM_SLOTS, {})
 }

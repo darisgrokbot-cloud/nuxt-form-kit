@@ -1,5 +1,5 @@
 export default defineNuxtPlugin(() => {
-  useFormKitRegistry().register({
+  useSchemaFormRegistry().register({
     sources: {
       provinces: () => $fetch('/api/provinces'),
       districts: ({ params, signal }) => $fetch('/api/districts', { query: params, signal }),

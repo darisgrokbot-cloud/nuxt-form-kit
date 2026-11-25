@@ -4,9 +4,10 @@ import { useNuxtApp, useRuntimeConfig } from '#imports'
 import { evaluateCondition } from '../core/conditions'
 import { resolveMessages } from '../core/messages'
 import { createRegistry } from '../core/registry'
-import type { FormKitRegistryInstance } from '../core/registry'
+import type { SchemaFormRegistryInstance } from '../core/registry'
 import { validateSync, validateValue } from '../core/rules'
 import type { RuleContext } from '../core/rules'
+import { knownFieldTypes } from '../core/builtinTypes'
 import {
   buildInitialValues, buildPayload, dependentsOf, emptyValueOf, flattenFields, isFieldVisible, validateSchema,
 } from '../core/schema'
@@ -16,7 +17,7 @@ import type {
 } from '../core/types'
 import { clone, isEmpty, stableStringify, toComparable } from '../core/utils'
 
-export interface UseFormKitOptions {
+export interface UseSchemaFormOptions {
   /** ref ของค่าในฟอร์ม (ใช้ร่วมกับ v-model) — ถ้าไม่ส่งจะสร้างให้ */
   values?: Ref<Values>
   /** ค่าเริ่มต้น (ใช้เมื่อไม่ได้ส่ง values) */
@@ -30,7 +31,7 @@ export interface UseFormKitOptions {
   /** source / rule เฉพาะฟอร์มนี้ (ทับของ registry) */
   sources?: Record<string, SourceFn>
   rules?: Record<string, RuleFn>
-  /** เขียนค่า default ลง values หลัง mount (FkForm + v-model ใช้ เพื่อกัน hydration mismatch) */
+  /** เขียนค่า default ลง values หลัง mount (SfForm + v-model ใช้ เพื่อกัน hydration mismatch) */
   deferDefaults?: boolean
 }
 
@@ -50,10 +51,10 @@ function normalizeServerErrors(list: ServerError[] | undefined): Record<string, 
   return map
 }
 
-function useRegistry(): FormKitRegistryInstance {
+function useRegistry(): SchemaFormRegistryInstance {
   try {
-    const app = useNuxtApp() as unknown as { $formKit?: FormKitRegistryInstance }
-    return app.$formKit ?? createRegistry()
+    const app = useNuxtApp() as unknown as { $schemaForm?: SchemaFormRegistryInstance, $formKit?: SchemaFormRegistryInstance }
+    return app.$schemaForm ?? app.$formKit ?? createRegistry()
   }
   catch {
     // ใช้นอก Nuxt (เช่น unit test) → registry ว่าง
@@ -63,14 +64,18 @@ function useRegistry(): FormKitRegistryInstance {
 
 function useModuleConfig(): { locale?: string, messages?: Partial<Messages> } {
   try {
-    return (useRuntimeConfig().public as { formKit?: { locale?: string, messages?: Partial<Messages> } }).formKit ?? {}
+    const pub = useRuntimeConfig().public as {
+      schemaForm?: { locale?: string, messages?: Partial<Messages> }
+      formKit?: { locale?: string, messages?: Partial<Messages> }
+    }
+    return pub.schemaForm ?? pub.formKit ?? {}
   }
   catch {
     return {}
   }
 }
 
-export function useFormKit(schemaInput: MaybeRefOrGetter<FormSchema>, options: UseFormKitOptions = {}) {
+export function useSchemaForm(schemaInput: MaybeRefOrGetter<FormSchema>, options: UseSchemaFormOptions = {}) {
   const registry = useRegistry()
   const moduleConfig = useModuleConfig()
 
@@ -79,9 +84,9 @@ export function useFormKit(schemaInput: MaybeRefOrGetter<FormSchema>, options: U
   const flatByKey = computed(() => new Map(flat.value.map(f => [f.field.key, f])))
 
   if (import.meta.dev) {
-    for (const issue of validateSchema(schema.value, undefined)) {
+    for (const issue of validateSchema(schema.value, knownFieldTypes(registry.fields))) {
       const log = issue.level === 'error' ? console.error : console.warn
-      log(`[form-kit] ${issue.message}`)
+      log(`[schema-form] ${issue.message}`)
     }
   }
 
@@ -390,11 +395,20 @@ export function useFormKit(schemaInput: MaybeRefOrGetter<FormSchema>, options: U
     markClean,
     getPayload,
     refreshOptions,
-    /** @internal ผูก UForm ของ FkForm */
+    /** @internal ผูก UForm ของ SfForm */
     _bindForm(form: UFormLike | null) {
       uForm.value = form
     },
   }
 }
 
-export type FormKitInstance = ReturnType<typeof useFormKit>
+export type SchemaFormInstance = ReturnType<typeof useSchemaForm>
+
+/** @deprecated Use `useSchemaForm` instead. */
+export const useFormKit = useSchemaForm
+
+/** @deprecated Use `UseSchemaFormOptions` instead. */
+export type UseFormKitOptions = UseSchemaFormOptions
+
+/** @deprecated Use `SchemaFormInstance` instead. */
+export type FormKitInstance = SchemaFormInstance

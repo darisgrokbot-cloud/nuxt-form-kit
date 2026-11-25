@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FormMode, ServerError } from 'nuxt-form-kit'
+import type { FormMode, ServerError } from '@stackcloud/schema-form'
 
 const schema = defineFormSchema([
   { key: 'title', type: 'text', label: 'ชื่อเรื่อง', rules: { required: true } },
@@ -63,7 +63,7 @@ function onSubmit(payload: Record<string, unknown>) {
       กำลังโหลดข้อมูล...
     </p>
     <UCard v-else>
-      <FkForm
+      <SfForm
         v-model="data"
         :schema="schema"
         :mode="mode"

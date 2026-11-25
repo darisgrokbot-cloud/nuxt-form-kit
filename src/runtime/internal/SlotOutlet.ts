@@ -1,7 +1,7 @@
 import { defineComponent } from 'vue'
 import type { PropType, Slot } from 'vue'
 
-/** render slot ที่ส่งต่อมาจาก <FkForm> (ข้าม component หลายชั้น) */
+/** render slot ที่ส่งต่อมาจาก <SfForm> (ข้าม component หลายชั้น) */
 export default defineComponent({
   name: 'FkSlotOutlet',
   props: {

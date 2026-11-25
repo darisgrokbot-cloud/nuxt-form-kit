@@ -9,6 +9,7 @@ export * from './schema'
 export * from './layout'
 export * from './messages'
 export * from './registry'
+export * from './builtinTypes'
 
 import type { FormSchema } from './types'
 

@@ -7,6 +7,7 @@ import type { FieldSchema } from '../core/types'
 import { useFormContext, useFormSlots } from './context'
 import FieldDisplay from './FieldDisplay.vue'
 import SlotOutlet from './SlotOutlet'
+import type { BuiltinFieldType } from '../core/types'
 import AutocompleteInput from './fields/AutocompleteInput.vue'
 import ChoiceInput from './fields/ChoiceInput.vue'
 import DateInput from './fields/DateInput.vue'
@@ -22,7 +23,7 @@ const props = defineProps<{ field: FieldSchema }>()
 const form = useFormContext()
 const slots = useFormSlots()
 
-const BUILTIN: Record<string, Component> = {
+const BUILTIN: Record<BuiltinFieldType, Component> = {
   'text': TextInput,
   'email': TextInput,
   'password': TextInput,
@@ -43,7 +44,7 @@ const BUILTIN: Record<string, Component> = {
 }
 
 const key = computed(() => props.field.key)
-const component = computed(() => form.registry.fields[props.field.type] ?? BUILTIN[props.field.type])
+const component = computed(() => form.registry.fields[props.field.type] ?? BUILTIN[props.field.type as BuiltinFieldType])
 const hasOptions = computed(() => Boolean((props.field as { options?: unknown }).options))
 const options = hasOptions.value
   ? reactive(
@@ -118,7 +119,7 @@ const fieldSlot = computed(() => slots[`field:${key.value}`])
       :locale="form.locale.value"
     />
     <p v-else class="text-sm text-error">
-      [form-kit] unknown field type "{{ field.type }}"
+      [schema-form] unknown field type "{{ field.type }}"
     </p>
   </UFormField>
 </template>

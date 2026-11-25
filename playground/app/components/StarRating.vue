@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FieldComponentProps } from 'nuxt-form-kit'
+import type { FieldComponentProps } from '@stackcloud/schema-form'
 
 // ตัวอย่าง field type ที่ลงทะเบียนเอง — ได้ props มาตรฐานเหมือน field ในตัว
 const props = defineProps<FieldComponentProps>()
