@@ -1,6 +1,6 @@
 {
   "name": "@stackcloud/schema-form",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Schema Form — schema-driven form inputs for Nuxt 4, built on Nuxt UI (formerly nuxt-form-kit).",
   "license": "MIT",
   "type": "module",
