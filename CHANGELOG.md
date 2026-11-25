@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Opt-in **container-query grid** mode: `schemaForm.grid.responsive: 'viewport' | 'container'` (default `'viewport'`) and a matching `responsive` prop on `<SfForm>`. In `container` mode the form root gets `@container` and `layout.span` breakpoints use Tailwind v4 container variants (`@sm:` / `@md:` / `@lg:` / `@xl:`) so forms in narrow sidebars no longer follow the viewport width.
 - Component tests for `<SfForm>` and main field types via `@nuxt/test-utils` (separate Vitest `components` project + CI job), keeping core unit tests in a fast Node project.
+- **Standard Schema** validation ([standardschema.dev](https://standardschema.dev)): optional form-level `validate` / `schema` (on `useSchemaForm`, `<SfForm>`, or `defineFormSchema({ fields, schema })`) and per-field `standard`. Works with Zod, Valibot, ArkType, and any `~standard` implementation. Issues map by path → field errors; async validate supported. Existing `rules` DSL is unchanged and still runs first.
+- **`InferFormValues<typeof schema>`** — infer payload types from `defineFormSchema` fields (or from a Standard Schema `InferOutput` when provided). `useSchemaForm` / `getPayload` / `values` are typed from that inference; untyped usage still defaults to `Record<string, any>`.
+- Dependency: `@standard-schema/spec` (types only). Zod / Valibot / ArkType are optional peer-style installs for apps and remain **devDependencies** in this repo for tests.
 
 ### Fixed
 

@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, provide, ref, useSlots, watch } from 'vue'
+import type { StandardSchemaV1 } from '@standard-schema/spec'
 import { useRuntimeConfig } from '#imports'
 import type { SchemaFormInstance } from '../composables/useSchemaForm'
 import { useSchemaForm } from '../composables/useSchemaForm'
 import { CONTAINER_ROOT_CLASS } from '../core/layout'
-import type { FieldError, FormMode, FormSchema, GridResponsive, Messages, RuleFn, ServerError, SourceFn, Values } from '../core/types'
+import type { FieldError, FormMode, FormSchemaInput, GridResponsive, Messages, RuleFn, ServerError, SourceFn, Values } from '../core/types'
 import { SCHEMA_FORM_GRID_KEY, SCHEMA_FORM_KEY, SCHEMA_FORM_SLOTS } from '../internal/context'
 import { focusFirstError } from '../internal/focusFirstError'
 import NodeRenderer from '../internal/NodeRenderer.vue'
@@ -12,8 +13,8 @@ import NodeRenderer from '../internal/NodeRenderer.vue'
 type ValidateOn = 'input' | 'change' | 'blur'
 
 const props = withDefaults(defineProps<{
-  /** schema ของฟอร์ม (ไม่ต้องส่งถ้าส่ง form) */
-  schema?: FormSchema
+  /** schema ของฟอร์ม (array หรือ { fields, schema/validate }) — ไม่ต้องส่งถ้าส่ง form */
+  schema?: FormSchemaInput
   /** instance จาก useSchemaForm() — ใช้เมื่อต้องการควบคุมจากภายนอก */
   form?: SchemaFormInstance
   mode?: FormMode
@@ -23,6 +24,11 @@ const props = withDefaults(defineProps<{
   messages?: Partial<Messages>
   sources?: Record<string, SourceFn>
   rules?: Record<string, RuleFn>
+  /**
+   * Form-level Standard Schema validator (Zod / Valibot / ArkType / …).
+   * Alias of the `schema`/`validate` field on a FormSchemaConfig object.
+   */
+  validate?: StandardSchemaV1
   /** ตรวจเมื่อไหร่ (default: blur + change) */
   validateOn?: ValidateOn[]
   /** แสดงปุ่ม submit อัตโนมัติ */
@@ -48,6 +54,7 @@ const props = withDefaults(defineProps<{
   messages: undefined,
   sources: undefined,
   rules: undefined,
+  validate: undefined,
   validateOn: () => ['blur', 'change'],
   submitLabel: undefined,
   resetLabel: undefined,
@@ -72,6 +79,7 @@ const form: SchemaFormInstance = props.form ?? useSchemaForm(() => props.schema 
   messages: props.messages,
   sources: props.sources,
   rules: props.rules,
+  validate: props.validate,
 })
 
 let moduleResponsive: GridResponsive = 'viewport'

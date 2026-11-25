@@ -1,7 +1,10 @@
 import { computed, getCurrentInstance, onMounted, reactive, ref, shallowRef, toValue, watch } from 'vue'
-import type { MaybeRefOrGetter, Ref } from 'vue'
+import type { ComputedRef, MaybeRefOrGetter, Ref } from 'vue'
+import type { StandardSchemaV1 } from '@standard-schema/spec'
 import { useNuxtApp, useRuntimeConfig } from '#imports'
 import { evaluateCondition } from '../core/conditions'
+import type { InferFormValues } from '../core/infer'
+import { resolveFormSchemaInput } from '../core/infer'
 import { resolveMessages } from '../core/messages'
 import { createRegistry } from '../core/registry'
 import type { SchemaFormRegistryInstance } from '../core/registry'
@@ -12,16 +15,19 @@ import {
   buildInitialValues, buildPayload, dependentsOf, emptyValueOf, flattenFields, isFieldVisible, validateSchema,
 } from '../core/schema'
 import type { FlatField, PayloadOptions } from '../core/schema'
+import {
+  validateStandardSchema, validateStandardSync, validateStandardValue,
+} from '../core/standard-schema'
 import type {
-  FieldError, FieldSchema, FormMode, FormSchema, Messages, RuleFn, ServerError, SourceFn, Values,
+  FieldError, FieldSchema, FormMode, FormSchema, FormSchemaInput, Messages, RuleFn, ServerError, SourceFn, Values,
 } from '../core/types'
 import { clone, isEmpty, stableStringify, toComparable } from '../core/utils'
 
-export interface UseSchemaFormOptions {
+export interface UseSchemaFormOptions<TValues extends Values = Values> {
   /** ref ของค่าในฟอร์ม (ใช้ร่วมกับ v-model) — ถ้าไม่ส่งจะสร้างให้ */
-  values?: Ref<Values>
-  /** ค่าเริ่มต้น (ใช้เมื่อไม่ได้ส่ง values) */
-  initialValues?: Values
+  values?: Ref<NoInfer<TValues>>
+  /** ค่าเริ่มต้น (ใช้เมื่อไม่ได้ส่ง values) — ไม่ reverse-infer TValues */
+  initialValues?: Partial<NoInfer<TValues>> & Values
   mode?: MaybeRefOrGetter<FormMode | undefined>
   disabled?: MaybeRefOrGetter<boolean | undefined>
   /** error จาก server [{ field, message }] */
@@ -31,6 +37,14 @@ export interface UseSchemaFormOptions {
   /** source / rule เฉพาะฟอร์มนี้ (ทับของ registry) */
   sources?: Record<string, SourceFn>
   rules?: Record<string, RuleFn>
+  /**
+   * Form-level Standard Schema validator (Zod / Valibot / ArkType / …).
+   * Runs after per-field `rules` / `standard`. Issues are mapped by path → field key.
+   * Alias: `schema`.
+   */
+  validate?: StandardSchemaV1
+  /** Alias for `validate` (Standard Schema). Prefer `validate` when also passing field `schema`. */
+  schema?: StandardSchemaV1
   /** เขียนค่า default ลง values หลัง mount (SfForm + v-model ใช้ เพื่อกัน hydration mismatch) */
   deferDefaults?: boolean
 }
@@ -74,11 +88,69 @@ function useModuleConfig(): { locale?: string, messages?: Partial<Messages> } {
   }
 }
 
-export function useSchemaForm(schemaInput: MaybeRefOrGetter<FormSchema>, options: UseSchemaFormOptions = {}) {
+type ResolvedValues<
+  TSchema extends FormSchemaInput,
+  TValidate extends StandardSchemaV1 | undefined,
+> = TValidate extends StandardSchemaV1
+  ? StandardSchemaV1.InferOutput<TValidate>
+  : InferFormValues<TSchema>
+
+export interface SchemaFormInstance<TValues extends Values = Values> {
+  schema: ComputedRef<FormSchema>
+  fields: ComputedRef<FieldSchema[]>
+  values: Ref<TValues>
+  state: ComputedRef<TValues>
+  mode: ComputedRef<FormMode>
+  isView: ComputedRef<boolean>
+  locale: ComputedRef<string>
+  messages: ComputedRef<Messages>
+  sources: ComputedRef<Record<string, SourceFn>>
+  registry: SchemaFormRegistryInstance
+  serverErrors: Ref<Record<string, string>>
+  errors: ComputedRef<FieldError[]>
+  isValid: ComputedRef<boolean>
+  isDirty: ComputedRef<boolean>
+  refreshTicks: Record<string, number>
+  t: (text: string | undefined) => string | undefined
+  getField: (key: string) => FieldSchema | undefined
+  isVisible: (key: string) => boolean
+  isRequired: (key: string) => boolean
+  isDisabled: (key: string) => boolean
+  isReadonly: (key: string) => boolean
+  isDependsOnBlocked: (key: string) => boolean
+  labelOf: (key: string) => string
+  runValidation: () => Promise<FieldError[]>
+  validate: () => Promise<boolean>
+  setValue: (key: string, value: unknown) => void
+  setValues: (partial: Partial<TValues> | Values) => void
+  reset: (next?: Partial<TValues> | Values) => void
+  setErrors: (list: ServerError[]) => void
+  clearErrors: () => void
+  markClean: () => void
+  getPayload: (opts?: PayloadOptions) => TValues
+  refreshOptions: (key?: string) => void
+  /** @internal ผูก UForm ของ SfForm */
+  _bindForm: (form: UFormLike | null) => void
+}
+
+export function useSchemaForm<
+  const TSchema extends FormSchemaInput = FormSchema,
+  TValidate extends StandardSchemaV1 | undefined = undefined,
+  TValues extends Values = ResolvedValues<TSchema, TValidate> extends Values
+    ? ResolvedValues<TSchema, TValidate>
+    : ResolvedValues<TSchema, TValidate> & Values,
+>(
+  schemaInput: MaybeRefOrGetter<TSchema>,
+  options: UseSchemaFormOptions<TValues> & { validate?: TValidate, schema?: TValidate } = {},
+): SchemaFormInstance<TValues> {
   const registry = useRegistry()
   const moduleConfig = useModuleConfig()
 
-  const schema = computed(() => toValue(schemaInput) ?? [])
+  const resolved = computed(() => resolveFormSchemaInput(toValue(schemaInput)))
+  const schema = computed(() => resolved.value.fields)
+  const formStandard = computed<StandardSchemaV1 | undefined>(
+    () => options.validate ?? options.schema ?? resolved.value.validate,
+  )
   const flat = computed(() => flattenFields(schema.value))
   const flatByKey = computed(() => new Map(flat.value.map(f => [f.field.key, f])))
 
@@ -90,7 +162,7 @@ export function useSchemaForm(schemaInput: MaybeRefOrGetter<FormSchema>, options
   }
 
   /* ------------------------------ values ------------------------------ */
-  const values: Ref<Values> = options.values ?? ref({ ...options.initialValues })
+  const values: Ref<TValues> = options.values ?? ref({ ...options.initialValues } as TValues) as Ref<TValues>
   const defaults = computed(() => buildInitialValues(schema.value))
 
   let previous: Values = {}
@@ -104,12 +176,12 @@ export function useSchemaForm(schemaInput: MaybeRefOrGetter<FormSchema>, options
   }
 
   /** ค่าที่ใช้อ่านทั้งหมด = defaults + values (ค่าใน values ชนะ) */
-  const state = computed<Values>(() => {
+  const state = computed<TValues>(() => {
     const out: Values = { ...defaults.value }
     for (const [k, v] of Object.entries(values.value ?? {})) {
       if (v !== undefined) out[k] = v
     }
-    return out
+    return out as TValues
   })
 
   const snapshot = ref(stableStringify(state.value))
@@ -117,9 +189,9 @@ export function useSchemaForm(schemaInput: MaybeRefOrGetter<FormSchema>, options
 
   /** เขียน defaults ลง values จริง — ถ้าใช้กับ v-model จะเลื่อนไปหลัง mount เพื่อไม่ให้ hydration mismatch */
   function commitDefaults() {
-    fillDefaults(values.value)
-    previous = clone(values.value)
-    previousTarget = values.value
+    fillDefaults(values.value as Values)
+    previous = clone(values.value as Values)
+    previousTarget = values.value as Values
     snapshot.value = stableStringify(values.value)
   }
   if (options.deferDefaults && getCurrentInstance()) onMounted(commitDefaults)
@@ -197,17 +269,18 @@ export function useSchemaForm(schemaInput: MaybeRefOrGetter<FormSchema>, options
   /* ------------------- cascade (dependsOn) + clearWhenHidden ---------- */
   watch(values, (current) => {
     if (suspended) return
+    const currentValues = current as Values
     // object ถูกแทนทั้งก้อน (เช่นโหลดข้อมูล edit) → ถือเป็นการตั้งค่าใหม่ ไม่ cascade
-    if (current !== previousTarget) {
-      fillDefaults(current)
-      previousTarget = current
-      previous = clone(current)
-      snapshot.value = stableStringify(current)
+    if (currentValues !== previousTarget) {
+      fillDefaults(currentValues)
+      previousTarget = currentValues
+      previous = clone(currentValues)
+      snapshot.value = stableStringify(currentValues)
       return
     }
 
-    const changed = Object.keys({ ...previous, ...current })
-      .filter(k => JSON.stringify(previous[k]) !== JSON.stringify(current[k]))
+    const changed = Object.keys({ ...previous, ...currentValues })
+      .filter(k => JSON.stringify(previous[k]) !== JSON.stringify(currentValues[k]))
     if (!changed.length) return
 
     // แก้ฟิลด์แล้ว error จาก server ของฟิลด์นั้นหายไป
@@ -223,17 +296,17 @@ export function useSchemaForm(schemaInput: MaybeRefOrGetter<FormSchema>, options
       for (const child of dependentsOf(schema.value, key)) {
         if (changedSet.has(child)) continue
         const field = getField(child)
-        if (field && !isEmpty(current[child])) current[child] = emptyValueOf(field)
+        if (field && !isEmpty(currentValues[child])) currentValues[child] = emptyValueOf(field)
       }
     }
 
     for (const f of flat.value) {
-      if (f.field.clearWhenHidden && !isFieldVisible(f, current) && !isEmpty(current[f.field.key])) {
-        current[f.field.key] = emptyValueOf(f.field)
+      if (f.field.clearWhenHidden && !isFieldVisible(f, currentValues) && !isEmpty(currentValues[f.field.key])) {
+        currentValues[f.field.key] = emptyValueOf(f.field)
       }
     }
 
-    previous = clone(current)
+    previous = clone(currentValues)
   }, { deep: true, flush: 'sync' })
 
   /* ----------------------------- validation --------------------------- */
@@ -270,31 +343,77 @@ export function useSchemaForm(schemaInput: MaybeRefOrGetter<FormSchema>, options
     return undefined
   }
 
-  /** ตรวจทั้งฟอร์ม (รวม custom/async rule) — ใช้เป็น validate ของ UForm */
+  function mergeFieldError(errors: FieldError[], seen: Set<string>, name: string, message: string) {
+    if (seen.has(name)) return
+    seen.add(name)
+    errors.push({ name, message })
+  }
+
+  /** ตรวจทั้งฟอร์ม (รวม custom/async rule + Standard Schema) — ใช้เป็น validate ของ UForm */
   async function runValidation(): Promise<FieldError[]> {
     const errors: FieldError[] = []
+    const seen = new Set<string>()
+
     for (const f of flat.value) {
       const key = f.field.key
       if (!shouldValidate(f)) continue
+
+      const value = state.value[key]
       const message = serverErrors.value[key]
-        ?? builtinTypeError(f.field, state.value[key])
-        ?? await validateValue(ruleValue(f.field, state.value[key]), f.field.rules, state.value, ruleContext(key))
-      if (message) errors.push({ name: key, message })
+        ?? builtinTypeError(f.field, value)
+        ?? await validateValue(ruleValue(f.field, value), f.field.rules, state.value, ruleContext(key))
+        ?? (f.field.standard ? await validateStandardValue(f.field.standard, value) : undefined)
+
+      if (message) mergeFieldError(errors, seen, key, message)
     }
+
+    const standard = formStandard.value
+    if (standard && !isView.value) {
+      for (const err of await validateStandardSchema(standard, state.value)) {
+        const flatField = flatByKey.value.get(err.name)
+        if (err.name && flatField && !shouldValidate(flatField)) continue
+        mergeFieldError(errors, seen, err.name, err.message)
+      }
+    }
+
     lastErrors.value = errors
     return errors
   }
 
   const lastErrors = ref<FieldError[]>([])
 
-  /** ผลตรวจแบบ sync (ไม่รวม custom/async) — reactive ใช้เปิด/ปิดปุ่มบันทึกได้ */
-  const isValid = computed(() => flat.value.every((f) => {
-    if (!shouldValidate(f)) return true
-    const key = f.field.key
-    if (serverErrors.value[key]) return false
-    return !builtinTypeError(f.field, state.value[key])
-      && !validateSync(ruleValue(f.field, state.value[key]), f.field.rules, state.value, ruleContext(key))
-  }))
+  /** ผลตรวจแบบ sync (ไม่รวม custom/async / async Standard Schema) — reactive ใช้เปิด/ปิดปุ่มบันทึกได้ */
+  const isValid = computed(() => {
+    const fieldOk = flat.value.every((f) => {
+      if (!shouldValidate(f)) return true
+      const key = f.field.key
+      if (serverErrors.value[key]) return false
+      const value = state.value[key]
+      if (builtinTypeError(f.field, value)) return false
+      if (validateSync(ruleValue(f.field, value), f.field.rules, state.value, ruleContext(key))) return false
+      if (f.field.standard && validateStandardSync(f.field.standard, value)) return false
+      return true
+    })
+    if (!fieldOk) return false
+
+    const standard = formStandard.value
+    if (standard && !isView.value) {
+      const result = standard['~standard'].validate(state.value)
+      if (!(result instanceof Promise) && result.issues?.length) {
+        return !result.issues.some((issue) => {
+          const name = issue.path?.length
+            ? String(typeof issue.path[0] === 'object' && issue.path[0] && 'key' in issue.path[0]
+              ? (issue.path[0] as { key: PropertyKey }).key
+              : issue.path[0])
+            : ''
+          if (!name) return true
+          const flatField = flatByKey.value.get(name)
+          return !flatField || shouldValidate(flatField)
+        })
+      }
+    }
+    return true
+  })
 
   /** ตรวจทั้งฟอร์มและแสดง error — คืน true ถ้าผ่าน */
   async function validate(): Promise<boolean> {
@@ -314,24 +433,24 @@ export function useSchemaForm(schemaInput: MaybeRefOrGetter<FormSchema>, options
 
   /* ------------------------------ actions ----------------------------- */
   function setValue(key: string, value: unknown) {
-    values.value[key] = value
+    ;(values.value as Values)[key] = value
   }
 
   /** ตั้งหลายค่าพร้อมกัน — ลูกที่ตั้งมาพร้อมแม่จะไม่ถูกล้าง */
-  function setValues(partial: Values) {
+  function setValues(partial: Partial<TValues> | Values) {
     Object.assign(values.value, partial)
   }
 
   /** รีเซ็ตกลับเป็นค่าเริ่มต้น หรือค่าที่ส่งมา (ไม่ cascade) */
-  function reset(next?: Values) {
+  function reset(next?: Partial<TValues> | Values) {
     suspended = true
-    const base = buildInitialValues(schema.value, next ?? JSON.parse(snapshot.value))
-    for (const k of Object.keys(values.value)) {
-      if (!(k in base)) delete values.value[k]
+    const base = buildInitialValues(schema.value, (next ?? JSON.parse(snapshot.value)) as Values)
+    for (const k of Object.keys(values.value as Values)) {
+      if (!(k in base)) delete (values.value as Values)[k]
     }
     Object.assign(values.value, base)
-    previous = clone(values.value)
-    previousTarget = values.value
+    previous = clone(values.value as Values)
+    previousTarget = values.value as Values
     snapshot.value = stableStringify(values.value)
     serverErrors.value = {}
     lastErrors.value = []
@@ -356,8 +475,8 @@ export function useSchemaForm(schemaInput: MaybeRefOrGetter<FormSchema>, options
     snapshot.value = stableStringify(state.value)
   }
 
-  function getPayload(opts?: PayloadOptions): Values {
-    return buildPayload(schema.value, state.value, opts)
+  function getPayload(opts?: PayloadOptions): TValues {
+    return buildPayload(schema.value, state.value, opts) as TValues
   }
 
   return {
@@ -403,5 +522,3 @@ export function useSchemaForm(schemaInput: MaybeRefOrGetter<FormSchema>, options
     },
   }
 }
-
-export type SchemaFormInstance = ReturnType<typeof useSchemaForm>
