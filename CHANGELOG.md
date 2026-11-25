@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- README lockup images use absolute `raw.githubusercontent.com` URLs so the logo renders on npm (package tarball does not include `assets/`).
+- `@internationalized/date` moved from `dependencies` to `peerDependencies` (still listed in `devDependencies` for local tests / playground). Install it alongside `@nuxt/ui`.
+
+### Added
+
+- README note that Schema Form is not affiliated with FormKit ([formkit.com](https://formkit.com)).
+- Migration guide from `nuxt-form-kit` 0.1.0 in this changelog.
+
 ## [0.3.0] - 2026-11-25
 
 ### Removed
@@ -19,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.0] - 2026-11-25
 
-Initial public release of **Schema Form** (`@stackcloud/schema-form`) for Nuxt 4.
+Initial public release of **Schema Form** (`@stackcloud/schema-form`) for Nuxt 4, renamed from `nuxt-form-kit` 0.1.0. Deprecated aliases for the old names were kept for one version (removed in 0.3.0).
 
 ### Added
 
@@ -31,6 +41,35 @@ Initial public release of **Schema Form** (`@stackcloud/schema-form`) for Nuxt 4
 - Brand assets (Field Stack lockup / icon / favicon) with README light/dark lockup.
 - Unit tests, playground, CI, and tag-triggered npm release workflow.
 
-[Unreleased]: https://schema-form.stackcloud.cc
-[0.3.0]: https://schema-form.stackcloud.cc
-[0.2.0]: https://schema-form.stackcloud.cc
+### Migrating from `nuxt-form-kit` 0.1.0
+
+`0.2.0` was the rename release (new package name + deprecated aliases). `0.3.0` removed those aliases — update call sites before upgrading past 0.2.x.
+
+| Old (`nuxt-form-kit` 0.1.0) | New (`@stackcloud/schema-form`) |
+|-----------------------------|----------------------------------|
+| Package `nuxt-form-kit` | `@stackcloud/schema-form` |
+| Import `nuxt-form-kit` / `nuxt-form-kit/core` | `@stackcloud/schema-form` / `@stackcloud/schema-form/core` |
+| `nuxt.config` key `formKit` | `schemaForm` |
+| `runtimeConfig.public.formKit` | `runtimeConfig.public.schemaForm` |
+| Module default prefix `Fk` → `<FkForm>`, `<FkField>`, … | Prefix `Sf` → `<SfForm>`, … |
+| `useFormKit` | `useSchemaForm` |
+| `useFormKitRegistry` | `useSchemaFormRegistry` |
+| `$formKit` (plugin provide) | `$schemaForm` |
+| Types `FormKitInstance`, `UseFormKitOptions`, `FormKitRegistry`, `FormKitRegistryInstance` | `SchemaFormInstance`, `UseSchemaFormOptions`, `SchemaFormRegistry`, `SchemaFormRegistryInstance` |
+| Injection keys `FORM_KIT_KEY` / `FORM_KIT_SLOTS` | `SCHEMA_FORM_KEY` / `SCHEMA_FORM_SLOTS` |
+| Log / CSS id prefix `[form-kit]` / `form-kit.css` | `[schema-form]` / `schema-form.css` |
+
+Example `nuxt.config.ts` after migration:
+
+```ts
+export default defineNuxtConfig({
+  modules: ['@nuxt/ui', '@stackcloud/schema-form'],
+  schemaForm: {
+    // was formKit: { … }
+  },
+})
+```
+
+[Unreleased]: https://github.com/darisgrokbot-cloud/schema-form/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/darisgrokbot-cloud/schema-form/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/darisgrokbot-cloud/schema-form/releases/tag/v0.2.0

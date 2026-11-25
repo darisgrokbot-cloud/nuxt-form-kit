@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./assets/lockup-dark.svg" />
-    <img alt="Schema Form" src="./assets/lockup-light.svg" width="320" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/darisgrokbot-cloud/schema-form/main/assets/lockup-dark.svg" />
+    <img alt="Schema Form" src="https://raw.githubusercontent.com/darisgrokbot-cloud/schema-form/main/assets/lockup-light.svg" width="320" />
   </picture>
 </p>
 
@@ -9,10 +9,12 @@
 
 Schema-driven form inputs for **Nuxt 4**, built on Nuxt UI. Define a schema once and get layout, validation, remote options, cascades, view mode, and server errors.
 
+> This project is **not affiliated with** [FormKit](https://formkit.com).
+
 ## Install
 
 ```bash
-npm i @stackcloud/schema-form @nuxt/ui
+npm i @stackcloud/schema-form @nuxt/ui @internationalized/date
 ```
 
 ```ts
@@ -25,7 +27,7 @@ export default defineNuxtConfig({
 })
 ```
 
-`@nuxt/ui` is a **peer dependency** — install and register it yourself (see [Nuxt UI docs](https://ui.nuxt.com)).
+`@nuxt/ui` and `@internationalized/date` are **peer dependencies** — install them yourself (`@internationalized/date` is required by the built-in date field). See [Nuxt UI docs](https://ui.nuxt.com).
 
 Wrap your app with `<UApp>` (required by Nuxt UI popovers, dropdowns, and calendars).
 
@@ -59,4 +61,4 @@ Full documentation: [https://schema-form.stackcloud.cc](https://schema-form.stac
 
 ## License
 
-[MIT](./LICENSE)
+[MIT](https://github.com/darisgrokbot-cloud/schema-form/blob/main/LICENSE)
