@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-<!-- Next release: rename this section to ## [0.3.1] - YYYY-MM-DD, bump package.json, add a fresh empty [Unreleased], then tag v0.3.1. -->
+## [0.3.1] - 2026-11-25
 
 ### Changed
 
@@ -73,6 +73,7 @@ export default defineNuxtConfig({
 })
 ```
 
-[Unreleased]: https://github.com/darisgrokbot-cloud/schema-form/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/darisgrokbot-cloud/schema-form/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/darisgrokbot-cloud/schema-form/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/darisgrokbot-cloud/schema-form/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/darisgrokbot-cloud/schema-form/releases/tag/v0.2.0
