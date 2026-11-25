@@ -10,6 +10,10 @@ const A11Y_KEYS: MessageKey[] = [
   'openColorPicker',
   'expand',
   'collapse',
+  'fileTooLarge',
+  'tooManyFiles',
+  'removeFile',
+  'filesSelected',
 ]
 
 describe('messages a11y registry', () => {
@@ -34,6 +38,8 @@ describe('messages a11y registry', () => {
     expect(messages.openColorPicker).toBe('เลือกสี')
     expect(messages.expand).toBe('กาง')
     expect(messages.collapse).toBe('ยุบ')
+    expect(messages.fileTooLarge).toContain('{maxSize}')
+    expect(messages.tooManyFiles).toContain('{maxFiles}')
   })
 
   it('resolveMessages returns english a11y strings', () => {
@@ -45,6 +51,10 @@ describe('messages a11y registry', () => {
     expect(messages.openColorPicker).toBe('Pick a color')
     expect(messages.expand).toBe('Expand')
     expect(messages.collapse).toBe('Collapse')
+    expect(messages.fileTooLarge).toContain('{maxSize}')
+    expect(messages.tooManyFiles).toContain('{maxFiles}')
+    expect(messages.removeFile).toBe('Remove file')
+    expect(messages.filesSelected).toContain('{count}')
   })
 
   it('resolveMessages allows overriding a11y strings', () => {

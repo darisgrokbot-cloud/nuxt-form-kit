@@ -24,12 +24,18 @@ export type InferFieldValue<F> =
   F extends { type: 'number' | 'money' } ? number | null
     : F extends { type: 'checkbox' | 'switch' } ? boolean
       : F extends { type: 'date-range' } ? { start: string | null, end: string | null }
-        : F extends { type: 'checkbox-group' } ? Primitive[]
-          : F extends { multiple: true } ? Primitive[]
-            : F extends { type: 'date' } ? string | null
-              : F extends { type: 'text' | 'email' | 'password' | 'tel' | 'url' | 'textarea' | 'color' } ? string | null
-                : F extends { type: 'select' | 'radio' | 'autocomplete' | 'tree-select' } ? Primitive
-                  : unknown
+        : F extends { type: 'tags' } ? string[]
+          : F extends { type: 'checkbox-group' } ? Primitive[]
+            : F extends { type: 'file', multiple: true } ? File[]
+              : F extends { type: 'file' } ? File | null
+                : F extends { type: 'slider', range: true } ? [number, number] | null
+                  : F extends { type: 'slider' } ? number | null
+                    : F extends { type: 'pin' } ? string | null
+                      : F extends { multiple: true } ? Primitive[]
+                        : F extends { type: 'date' | 'time' | 'datetime' } ? string | null
+                          : F extends { type: 'text' | 'email' | 'password' | 'tel' | 'url' | 'textarea' | 'color' } ? string | null
+                            : F extends { type: 'select' | 'radio' | 'autocomplete' | 'tree-select' } ? Primitive
+                              : unknown
 
 type FieldValuesFromSchema<T> = {
   [F in FlattenFields<T> as F extends { key: infer K extends string } ? K : never]: InferFieldValue<F>

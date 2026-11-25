@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { FieldSchema, Messages, NumberField } from '../core/types'
-import { isEmpty } from '../core/utils'
+import type { FieldSchema, Messages, NumberField, PinField, SliderField } from '../core/types'
+import { format, isEmpty } from '../core/utils'
 import type { FieldOptionsView } from './types'
 
 /** แสดงค่าเป็นข้อความ — ใช้ใน view mode และ readonlyWhen */
@@ -22,6 +22,31 @@ function formatDate(iso: unknown): string {
   return d.toLocaleDateString(intlLocale.value, { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
+function formatDateTime(iso: unknown): string {
+  if (typeof iso !== 'string' || iso === '') return ''
+  const normalized = iso.includes('T') ? iso : `${iso}T00:00:00`
+  const d = new Date(normalized.length === 16 ? `${normalized}:00` : normalized)
+  if (Number.isNaN(d.getTime())) return iso
+  return d.toLocaleString(intlLocale.value, {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
+function formatFile(value: unknown): string {
+  if (value instanceof File) return value.name
+  if (Array.isArray(value)) {
+    const names = value.filter((f): f is File => f instanceof File).map(f => f.name)
+    if (!names.length) return props.messages.empty
+    if (names.length === 1) return names[0]!
+    return format(props.messages.filesSelected, { count: names.length })
+  }
+  return String(value)
+}
+
 const text = computed(() => {
   const { field, value } = props
   if (field.type === 'checkbox' || field.type === 'switch') {
@@ -29,11 +54,27 @@ const text = computed(() => {
   }
   if (isEmpty(value)) return props.messages.empty
 
+  if (field.type === 'file') return formatFile(value)
+  if (field.type === 'tags' && Array.isArray(value)) return value.map(String).join(', ')
+  if (field.type === 'pin' && typeof value === 'string') {
+    return (field as PinField).mask ? '•'.repeat(value.length) : value
+  }
+  if (field.type === 'slider') {
+    if (Array.isArray(value)) return `${value[0]} – ${value[1]}`
+    if (typeof value === 'number') {
+      const f = field as SliderField
+      return new Intl.NumberFormat(intlLocale.value).format(value)
+        + (f.max != null ? ` / ${f.max}` : '')
+    }
+  }
+
   if (props.options) {
     const list = Array.isArray(value) ? value : [value]
     return list.map(v => props.options?.labelOf(v) ?? String(v)).join(', ')
   }
   if (field.type === 'date') return formatDate(value)
+  if (field.type === 'datetime') return formatDateTime(value)
+  if (field.type === 'time' && typeof value === 'string') return value
   if (field.type === 'date-range' && value && typeof value === 'object') {
     const r = value as { start?: string, end?: string }
     return `${formatDate(r.start) || '…'} – ${formatDate(r.end) || '…'}`

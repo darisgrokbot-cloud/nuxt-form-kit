@@ -32,6 +32,10 @@ export const th: Messages = {
   openColorPicker: 'เลือกสี',
   expand: 'กาง',
   collapse: 'ยุบ',
+  fileTooLarge: 'ไฟล์ใหญ่เกิน {maxSize}',
+  tooManyFiles: 'เลือกได้ไม่เกิน {maxFiles} ไฟล์',
+  removeFile: 'ลบไฟล์',
+  filesSelected: 'เลือก {count} ไฟล์',
 }
 
 export const en: Messages = {
@@ -66,6 +70,10 @@ export const en: Messages = {
   openColorPicker: 'Pick a color',
   expand: 'Expand',
   collapse: 'Collapse',
+  fileTooLarge: 'File exceeds {maxSize}',
+  tooManyFiles: 'At most {maxFiles} files allowed',
+  removeFile: 'Remove file',
+  filesSelected: '{count} files selected',
 }
 
 export const locales: Record<string, Messages> = { th, en }

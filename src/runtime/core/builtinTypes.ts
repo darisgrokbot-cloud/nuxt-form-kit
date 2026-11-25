@@ -20,6 +20,12 @@ export const BUILTIN_FIELD_TYPES: readonly BuiltinFieldType[] = [
   'date-range',
   'tree-select',
   'color',
+  'file',
+  'tags',
+  'time',
+  'datetime',
+  'slider',
+  'pin',
 ]
 
 /** All types known to the form: builtins + custom registry field components. */

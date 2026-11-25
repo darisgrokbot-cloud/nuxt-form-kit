@@ -16,6 +16,14 @@ describe('InferFormValues — field schema', () => {
       { key: 'start', type: 'date' },
       { key: 'window', type: 'date-range' },
       { key: 'accent', type: 'color' },
+      { key: 'opens', type: 'time' },
+      { key: 'published', type: 'datetime' },
+      { key: 'labels', type: 'tags' },
+      { key: 'cover', type: 'file' },
+      { key: 'gallery', type: 'file', multiple: true },
+      { key: 'volume', type: 'slider' },
+      { key: 'price', type: 'slider', range: true },
+      { key: 'otp', type: 'pin' },
       { key: 'tags', type: 'checkbox-group', options: { items: ['a'] } },
       { key: 'roles', type: 'select', multiple: true, options: { items: ['a'] } },
       { key: 'level', type: 'select', options: { items: ['a'] } },
@@ -30,6 +38,14 @@ describe('InferFormValues — field schema', () => {
     expectTypeOf<V['start']>().toEqualTypeOf<string | null>()
     expectTypeOf<V['window']>().toEqualTypeOf<{ start: string | null, end: string | null }>()
     expectTypeOf<V['accent']>().toEqualTypeOf<string | null>()
+    expectTypeOf<V['opens']>().toEqualTypeOf<string | null>()
+    expectTypeOf<V['published']>().toEqualTypeOf<string | null>()
+    expectTypeOf<V['labels']>().toEqualTypeOf<string[]>()
+    expectTypeOf<V['cover']>().toEqualTypeOf<File | null>()
+    expectTypeOf<V['gallery']>().toEqualTypeOf<File[]>()
+    expectTypeOf<V['volume']>().toEqualTypeOf<number | null>()
+    expectTypeOf<V['price']>().toEqualTypeOf<[number, number] | null>()
+    expectTypeOf<V['otp']>().toEqualTypeOf<string | null>()
     expectTypeOf<V['tags']>().toEqualTypeOf<Array<string | number | boolean | null>>()
     expectTypeOf<V['roles']>().toEqualTypeOf<Array<string | number | boolean | null>>()
     expectTypeOf<V['level']>().toEqualTypeOf<string | number | boolean | null>()
