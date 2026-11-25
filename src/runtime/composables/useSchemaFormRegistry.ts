@@ -15,14 +15,10 @@ import type { SchemaFormRegistryInstance } from '../core/registry'
 export function useSchemaFormRegistry(): SchemaFormRegistryInstance {
   const app = useNuxtApp() as unknown as {
     $schemaForm?: SchemaFormRegistryInstance
-    $formKit?: SchemaFormRegistryInstance
   }
-  const registry = app.$schemaForm ?? app.$formKit
+  const registry = app.$schemaForm
   if (!registry) {
     throw new Error('[schema-form] registry plugin is not installed')
   }
   return registry
 }
-
-/** @deprecated Use `useSchemaFormRegistry` instead. */
-export const useFormKitRegistry = useSchemaFormRegistry

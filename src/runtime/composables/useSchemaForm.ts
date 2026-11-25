@@ -53,8 +53,8 @@ function normalizeServerErrors(list: ServerError[] | undefined): Record<string, 
 
 function useRegistry(): SchemaFormRegistryInstance {
   try {
-    const app = useNuxtApp() as unknown as { $schemaForm?: SchemaFormRegistryInstance, $formKit?: SchemaFormRegistryInstance }
-    return app.$schemaForm ?? app.$formKit ?? createRegistry()
+    const app = useNuxtApp() as unknown as { $schemaForm?: SchemaFormRegistryInstance }
+    return app.$schemaForm ?? createRegistry()
   }
   catch {
     // ใช้นอก Nuxt (เช่น unit test) → registry ว่าง
@@ -66,9 +66,8 @@ function useModuleConfig(): { locale?: string, messages?: Partial<Messages> } {
   try {
     const pub = useRuntimeConfig().public as {
       schemaForm?: { locale?: string, messages?: Partial<Messages> }
-      formKit?: { locale?: string, messages?: Partial<Messages> }
     }
-    return pub.schemaForm ?? pub.formKit ?? {}
+    return pub.schemaForm ?? {}
   }
   catch {
     return {}
@@ -403,12 +402,3 @@ export function useSchemaForm(schemaInput: MaybeRefOrGetter<FormSchema>, options
 }
 
 export type SchemaFormInstance = ReturnType<typeof useSchemaForm>
-
-/** @deprecated Use `useSchemaForm` instead. */
-export const useFormKit = useSchemaForm
-
-/** @deprecated Use `UseSchemaFormOptions` instead. */
-export type UseFormKitOptions = UseSchemaFormOptions
-
-/** @deprecated Use `SchemaFormInstance` instead. */
-export type FormKitInstance = SchemaFormInstance

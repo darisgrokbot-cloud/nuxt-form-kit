@@ -22,12 +22,11 @@ export interface ModuleOptions {
 export type * from './runtime/core/types'
 export type {
   SchemaFormInstance, UseSchemaFormOptions,
-  FormKitInstance, UseFormKitOptions,
 } from './runtime/composables/useSchemaForm'
 export type { FieldOptionsState } from './runtime/composables/useFieldOptions'
 export type { FieldComponentProps, FieldOptionsView } from './runtime/internal/types'
 export type {
-  SchemaFormRegistry, FormKitRegistry, RegisterOptions,
+  SchemaFormRegistry, RegisterOptions,
 } from './runtime/core/registry'
 export type { PayloadOptions, SchemaIssue } from './runtime/core/schema'
 
@@ -53,25 +52,17 @@ export default defineNuxtModule<ModuleOptions>({
 
     const nuxtOpts = nuxt.options as typeof nuxt.options & {
       schemaForm?: Partial<ModuleOptions>
-      formKit?: Partial<ModuleOptions>
     }
 
-    if (nuxtOpts.formKit && import.meta.dev) {
-      console.warn('[schema-form] nuxt.config key `formKit` is deprecated; rename it to `schemaForm`.')
-    }
-
-    const resolved = defu(nuxtOpts.schemaForm, nuxtOpts.formKit, options, defaults) as ModuleOptions
+    const resolved = defu(nuxtOpts.schemaForm, options, defaults) as ModuleOptions
 
     const publicConfig = nuxt.options.runtimeConfig.public as Record<string, unknown>
     const formPublic = {
       locale: resolved.locale,
       messages: resolved.messages ?? {},
       ...(publicConfig.schemaForm as object | undefined),
-      ...(publicConfig.formKit as object | undefined),
     }
     publicConfig.schemaForm = formPublic
-    // Deprecated alias for apps still reading runtimeConfig.public.formKit
-    publicConfig.formKit = formPublic
 
     addPlugin(resolve('./runtime/plugin'))
 
@@ -80,15 +71,6 @@ export default defineNuxtModule<ModuleOptions>({
       prefix: resolved.prefix,
       pathPrefix: false,
     })
-
-    // Deprecated Fk* aliases for one major/minor cycle
-    if (resolved.prefix !== 'Fk') {
-      addComponentsDir({
-        path: resolve('./runtime/components'),
-        prefix: 'Fk',
-        pathPrefix: false,
-      })
-    }
 
     addImportsDir(resolve('./runtime/composables'))
     addImports([

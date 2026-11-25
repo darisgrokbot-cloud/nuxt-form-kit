@@ -1,16 +1,16 @@
 {
   "name": "@stackcloud/schema-form",
-  "version": "0.2.0",
-  "description": "Schema Form — schema-driven form inputs for Nuxt 4, built on Nuxt UI (formerly nuxt-form-kit).",
+  "version": "0.3.0",
+  "description": "Schema Form — schema-driven form inputs for Nuxt 4, built on Nuxt UI.",
   "license": "MIT",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/darisgrokbot-cloud/nuxt-form-kit.git"
+    "url": "git+https://github.com/darisgrokbot-cloud/schema-form.git"
   },
-  "homepage": "https://formkit.stackcloud.cc",
+  "homepage": "https://schema-form.stackcloud.cc",
   "bugs": {
-    "url": "https://github.com/darisgrokbot-cloud/nuxt-form-kit/issues"
+    "url": "https://github.com/darisgrokbot-cloud/schema-form/issues"
   },
   "publishConfig": {
     "access": "public",

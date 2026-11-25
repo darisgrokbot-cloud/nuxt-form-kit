@@ -245,7 +245,7 @@ const placeholderText = computed(() => props.placeholder ?? props.messages.selec
       :disabled="disabled"
       class="group relative inline-flex w-full items-center gap-1.5 rounded-md border border-default bg-default px-2.5 py-1.5 text-sm shadow-xs transition-colors hover:bg-elevated/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inverted disabled:cursor-not-allowed disabled:opacity-50"
       :class="[field.props?.class]"
-      data-fk-tree-select-trigger
+      data-sf-tree-select-trigger
       @keydown="onTriggerKeydown"
     >
       <span
@@ -274,7 +274,7 @@ const placeholderText = computed(() => props.placeholder ?? props.messages.selec
     <template #content>
       <div
         class="flex w-(--reka-popover-trigger-width) min-w-64 flex-col gap-1 p-1"
-        data-fk-tree-select-panel
+        data-sf-tree-select-panel
         @keydown="onListKeydown"
       >
         <div v-if="searchable" class="p-1">
@@ -286,7 +286,7 @@ const placeholderText = computed(() => props.placeholder ?? props.messages.selec
             size="sm"
             autofocus
             autocomplete="off"
-            data-fk-tree-select-search
+            data-sf-tree-select-search
           />
         </div>
 
@@ -339,7 +339,7 @@ const placeholderText = computed(() => props.placeholder ?? props.messages.selec
                 node.item.disabled ? 'opacity-50 pointer-events-none' : 'cursor-pointer',
               ]"
               :style="{ paddingInlineStart: `${0.25 + node.depth * 0.85}rem` }"
-              data-fk-tree-node
+              data-sf-tree-node
               @mouseenter="activeIndex = index"
               @click="onSelectNode(node.item)"
             >
@@ -349,7 +349,7 @@ const placeholderText = computed(() => props.placeholder ?? props.messages.selec
                 class="inline-flex size-5 shrink-0 items-center justify-center rounded text-muted hover:bg-accented/50"
                 tabindex="-1"
                 :aria-label="isExpanded(node.item) ? messages.collapseAll : messages.expandAll"
-                data-fk-tree-expand
+                data-sf-tree-expand
                 @click="onToggleExpand(node.item, $event)"
               >
                 <UIcon
@@ -366,7 +366,7 @@ const placeholderText = computed(() => props.placeholder ?? props.messages.selec
                   'bg-primary border-primary text-inverted': checkStateOf(node.item) === 'checked',
                   'bg-primary/40 border-primary': checkStateOf(node.item) === 'indeterminate',
                 }"
-                data-fk-tree-check
+                data-sf-tree-check
               >
                 <UIcon
                   v-if="checkStateOf(node.item) === 'checked'"

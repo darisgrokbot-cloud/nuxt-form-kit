@@ -7,7 +7,7 @@ import { useFormContext, useFormSlots } from './context'
 import FieldRenderer from './FieldRenderer.vue'
 import SlotOutlet from './SlotOutlet'
 
-defineOptions({ name: 'FkNodeRenderer' })
+defineOptions({ name: 'SfNodeRenderer' })
 
 defineProps<{ nodes: SchemaNode[] }>()
 
@@ -39,7 +39,7 @@ function cellClass(node: SchemaNode) {
       <section
         v-else-if="node.type === 'section'"
         :class="cellClass(node)"
-        :data-fk-section="node.key"
+        :data-sf-section="node.key"
         class="rounded-lg border border-default bg-default p-4 sm:p-5"
       >
         <UCollapsible v-if="node.collapsible" :default-open="node.defaultOpen ?? true">
@@ -54,7 +54,7 @@ function cellClass(node: SchemaNode) {
           </template>
           <template #content>
             <div class="mt-4 grid grid-cols-12 gap-x-4 gap-y-4">
-              <FkNodeRenderer :nodes="node.children" />
+              <SfNodeRenderer :nodes="node.children" />
             </div>
           </template>
         </UCollapsible>
@@ -68,7 +68,7 @@ function cellClass(node: SchemaNode) {
             </p>
           </header>
           <div class="grid grid-cols-12 gap-x-4 gap-y-4">
-            <FkNodeRenderer :nodes="node.children" />
+            <SfNodeRenderer :nodes="node.children" />
           </div>
         </template>
       </section>
@@ -78,7 +78,7 @@ function cellClass(node: SchemaNode) {
         :class="cellClass(node)"
         class="grid grid-cols-12 gap-x-4 gap-y-4"
       >
-        <FkNodeRenderer :nodes="node.children" />
+        <SfNodeRenderer :nodes="node.children" />
       </div>
 
       <div v-else-if="node.type === 'slot' && slots[`slot:${node.name}`]" :class="cellClass(node)">
