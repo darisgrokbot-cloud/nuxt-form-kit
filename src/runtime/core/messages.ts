@@ -25,6 +25,12 @@ export const th: Messages = {
   expandAll: 'กางทั้งหมด',
   collapseAll: 'ยุบทั้งหมด',
   selectedCount: 'เลือก {count} รายการ',
+  clear: 'ล้างค่า',
+  showPassword: 'แสดงรหัสผ่าน',
+  hidePassword: 'ซ่อนรหัสผ่าน',
+  openCalendar: 'เปิดปฏิทิน',
+  expand: 'กาง',
+  collapse: 'ยุบ',
 }
 
 export const en: Messages = {
@@ -52,6 +58,12 @@ export const en: Messages = {
   expandAll: 'Expand all',
   collapseAll: 'Collapse all',
   selectedCount: '{count} selected',
+  clear: 'Clear',
+  showPassword: 'Show password',
+  hidePassword: 'Hide password',
+  openCalendar: 'Open calendar',
+  expand: 'Expand',
+  collapse: 'Collapse',
 }
 
 export const locales: Record<string, Messages> = { th, en }

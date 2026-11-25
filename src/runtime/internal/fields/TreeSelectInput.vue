@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue'
+import { useFormField } from '@nuxt/ui/composables/useFormField'
 import type { Primitive, TreeOptionItem, TreeSelectField, TreeSelectMode } from '../../core/types'
 import {
   applyTreeToggle,
@@ -21,6 +22,10 @@ type TreeOptionsView = NonNullable<FieldComponentProps<TreeSelectField>['options
 const props = defineProps<FieldComponentProps<TreeSelectField>>()
 const model = defineModel<Primitive | Primitive[] | null>()
 
+const { id, ariaAttrs, emitFormBlur, emitFormChange } = useFormField({
+  disabled: props.disabled,
+})
+
 const open = ref(false)
 const search = ref('')
 const expanded = ref<Set<string>>(new Set())
@@ -32,6 +37,12 @@ const multiple = computed(() => Boolean(props.field.multiple))
 const clearable = computed(() => props.field.clearable ?? true)
 const mode = computed<TreeSelectMode>(() => props.field.selectionMode ?? (multiple.value ? 'cascade' : 'independent'))
 const treeOptions = computed(() => props.options as TreeOptionsView | undefined)
+
+const listboxId = computed(() => `${id.value ?? 'sf-tree'}-listbox`)
+
+function optionId(index: number) {
+  return `${listboxId.value}-option-${index}`
+}
 
 const roots = computed<TreeOptionItem[]>(() => {
   const fromOptions = treeOptions.value?.treeItems
@@ -68,6 +79,11 @@ const visibleNodes = computed(() => {
   }
   walk(nodes, 0)
   return out
+})
+
+const activeDescendant = computed(() => {
+  if (!open.value || activeIndex.value < 0 || activeIndex.value >= visibleNodes.value.length) return undefined
+  return optionId(activeIndex.value)
 })
 
 const selectedValues = computed<Primitive[]>(() => {
@@ -120,6 +136,7 @@ watch(open, async (isOpen) => {
   else {
     search.value = ''
     activeIndex.value = -1
+    emitFormBlur()
   }
 })
 
@@ -131,6 +148,7 @@ function setModel(next: Primitive[]) {
     model.value = next.length ? next[0]! : null
     open.value = false
   }
+  emitFormChange()
 }
 
 function onToggleExpand(item: TreeOptionItem, event?: Event) {
@@ -169,6 +187,7 @@ function clear(event?: Event) {
   event?.stopPropagation()
   if (props.disabled || !clearable.value) return
   model.value = multiple.value ? [] : null
+  emitFormChange()
 }
 
 function expandAll() {
@@ -237,15 +256,19 @@ const placeholderText = computed(() => props.placeholder ?? props.messages.selec
     class="w-full"
   >
     <button
+      :id="id"
       type="button"
       role="combobox"
       :aria-expanded="open"
+      :aria-controls="listboxId"
+      :aria-activedescendant="activeDescendant"
       :aria-disabled="disabled || undefined"
       aria-haspopup="listbox"
       :disabled="disabled"
       class="group relative inline-flex w-full items-center gap-1.5 rounded-md border border-default bg-default px-2.5 py-1.5 text-sm shadow-xs transition-colors hover:bg-elevated/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inverted disabled:cursor-not-allowed disabled:opacity-50"
-      :class="[field.props?.class]"
+      :class="[field.props?.class, ariaAttrs?.['aria-invalid'] ? 'ring-2 ring-error' : '']"
       data-sf-tree-select-trigger
+      v-bind="ariaAttrs"
       @keydown="onTriggerKeydown"
     >
       <span
@@ -262,7 +285,7 @@ const placeholderText = computed(() => props.placeholder ?? props.messages.selec
         size="xs"
         icon="i-lucide-x"
         class="shrink-0"
-        :aria-label="'clear'"
+        :aria-label="messages.clear"
         @click="clear"
       />
       <UIcon
@@ -310,6 +333,7 @@ const placeholderText = computed(() => props.placeholder ?? props.messages.selec
         </div>
 
         <div
+          :id="listboxId"
           ref="listRef"
           role="listbox"
           :aria-multiselectable="multiple || undefined"
@@ -327,6 +351,7 @@ const placeholderText = computed(() => props.placeholder ?? props.messages.selec
           <template v-else>
             <div
               v-for="(node, index) in visibleNodes"
+              :id="optionId(index)"
               :key="String(node.item.value)"
               role="option"
               :aria-selected="checkStateOf(node.item) === 'checked'"
@@ -348,7 +373,8 @@ const placeholderText = computed(() => props.placeholder ?? props.messages.selec
                 type="button"
                 class="inline-flex size-5 shrink-0 items-center justify-center rounded text-muted hover:bg-accented/50"
                 tabindex="-1"
-                :aria-label="isExpanded(node.item) ? messages.collapseAll : messages.expandAll"
+                :aria-label="isExpanded(node.item) ? messages.collapse : messages.expand"
+                :aria-expanded="isExpanded(node.item)"
                 data-sf-tree-expand
                 @click="onToggleExpand(node.item, $event)"
               >

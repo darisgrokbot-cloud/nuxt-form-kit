@@ -36,7 +36,7 @@ function onBlur() {
         variant="link"
         size="sm"
         :icon="reveal ? 'i-lucide-eye-off' : 'i-lucide-eye'"
-        :aria-label="reveal ? 'Hide password' : 'Show password'"
+        :aria-label="reveal ? messages.hidePassword : messages.showPassword"
         :aria-pressed="reveal"
         @click="reveal = !reveal"
       />

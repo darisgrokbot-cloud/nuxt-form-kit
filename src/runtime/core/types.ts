@@ -339,5 +339,6 @@ export type ServerError = { field?: string, key?: string, name?: string, message
 export type MessageKey =
   | RuleName | 'dateRange' | 'loadError' | 'noOptions' | 'loading' | 'loadMore' | 'search' | 'selectPlaceholder' | 'empty'
   | 'expandAll' | 'collapseAll' | 'selectedCount'
+  | 'clear' | 'showPassword' | 'hidePassword' | 'openCalendar' | 'expand' | 'collapse'
 
 export type Messages = Record<MessageKey, string>
