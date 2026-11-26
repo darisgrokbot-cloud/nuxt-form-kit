@@ -21,10 +21,10 @@ jobs:
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          # Keep Node 20 (engines) but use a current npm — 10.8.x left
-          # packument readme/readmeFilename empty for this package even though
-          # README.md was in the tarball (see RELEASING.md).
-          node-version: "20"
+          # Node 22: npm@latest (12+) requires ^22.22.2 || ^24.15.0 || >=26.
+          # A current npm is needed so packument readme/readmeFilename populate
+          # (10.8.x left them empty even with README.md in the tarball — see RELEASING.md).
+          node-version: "22"
           registry-url: https://registry.npmjs.org
           cache: npm
 
