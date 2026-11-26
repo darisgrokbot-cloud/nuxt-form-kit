@@ -7,20 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-26
+
 ### Added
 
-- Built-in field types (planned for the next minor release; package remains **0.4.0** until that release is approved):
+- Seven built-in field types (each with component tests and `InferFormValues` support):
   - **`color`** — Nuxt UI `UColorPicker` in a `UPopover` (swatch + hex/`rgb`/`hsl`/`cmyk`/`lab` input, optional `swatches`). Value: `string | null`.
-  - **`file`** — `UFileUpload` with `accept`, `multiple`, `maxSize` / `maxFiles` (messages `fileTooLarge` / `tooManyFiles`), and image `preview`. Value: `File | File[] | null`.
+  - **`file`** — `UFileUpload` with `accept`, `multiple`, `maxSize` / `maxFiles` (messages `fileTooLarge` / `tooManyFiles`), and image `preview`. Value: `File | null`, or `File[]` with `multiple: true`.
   - **`tags`** — `UInputTags` with `max`, `unique` (default `true`), `placeholder`. Value: `string[]`.
   - **`time`** — `UInputTime` (`@internationalized/date` `Time`) with `granularity` / `hourCycle` / `min` / `max`. Value: `HH:mm` or `HH:mm:ss` string | `null`.
   - **`datetime`** — `UInputDate` + `CalendarDateTime` (`granularity` minute/second, `min` / `max`). Value: local ISO `YYYY-MM-DDTHH:mm` (or with seconds) | `null`.
-  - **`slider`** — `USlider` with `min` / `max` / `step` / `range`; `showValue` renders a live value label under the track (pass `props.tooltip` for Nuxt UI tooltips when `UApp` provides TooltipProvider). Value: `number` or `[number, number]`.
-  - **`pin`** — `UPinInput` with `length` (default 6), `inputType` (`number`|`text`, maps to UPinInput `type` — renamed to avoid clashing with schema `type: 'pin'`), `mask`, `otp`. Value: joined `string`.
+  - **`slider`** — `USlider` with `min` / `max` / `step` / `range`; `showValue` renders a live value label under the track (pass `props.tooltip` for Nuxt UI tooltips when `UApp` provides TooltipProvider). Value: `number | null`, or `[number, number] | null` with `range: true`.
+  - **`pin`** — `UPinInput` with `length` (default 6), `inputType` (`number` | `text`, maps to UPinInput `type` — named to avoid clashing with schema `type: 'pin'`), `mask`, `otp`. Value: joined `string | null`.
+- Message keys `openColorPicker`, `fileTooLarge`, `tooManyFiles`, `removeFile`, `filesSelected` (Thai default + English).
+
+### Changed
+
+- The type names `color`, `file`, `tags`, `time`, `datetime`, `slider`, and `pin` are now built in. A custom field registered under one of these names via `useSchemaFormRegistry().register({ fields })` still takes precedence when rendering, but `tags` fields now start with an empty array (`[]`) instead of `null`. Rename custom types that clash (for example `rating`) to avoid confusion.
+- `MessageKey` / `Messages` include the new keys above. Overrides passed as `Partial<Messages>` are unaffected; code that declares a complete `Messages` object for a custom locale should add the new keys.
+- Published tarball now lists `README.md` and `LICENSE` explicitly in `files`.
 
 ### Fixed
 
-- Ensure npm packument `readme` / `readmeFilename` are populated on the next publish (explicitly ship `README.md` in `files`, verify the publish manifest before `npm publish`). Registry metadata for already-published 0.2–0.4 stays empty until a new version is published — do not republish those tags.
+- npm packument `readme` / `readmeFilename` are populated again (README shipped explicitly and the publish manifest is verified in CI before `npm publish`). Metadata for 0.2.0–0.4.0 stays as published.
 
 ## [0.4.0] - 2026-11-25
 
@@ -106,7 +115,8 @@ export default defineNuxtConfig({
 })
 ```
 
-[Unreleased]: https://github.com/darisgrokbot-cloud/schema-form/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/darisgrokbot-cloud/schema-form/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/darisgrokbot-cloud/schema-form/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/darisgrokbot-cloud/schema-form/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/darisgrokbot-cloud/schema-form/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/darisgrokbot-cloud/schema-form/compare/v0.2.0...v0.3.0
